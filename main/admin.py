@@ -10,3 +10,5 @@ class AboutUsImageInLine(admin.TabularInline):
 class AboutUsAdmin(admin.ModelAdmin):
     inlines = [AboutUsImageInLine, ]
 
+admin.site.register(Benefit)
+

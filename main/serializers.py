@@ -11,7 +11,6 @@ class AboutUsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AboutUs
         fields = ('title', 'text')
-
     
     def create(self, validated_data):
         request = self.context.get('request')
@@ -35,5 +34,12 @@ class AboutUsSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['images'] = AboutUsImage(instance.images.all(), many=True).data
         return representation
+
+
+class BenefitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Benefit
+        fields = ('icon', 'title', 'description')
+
 
         

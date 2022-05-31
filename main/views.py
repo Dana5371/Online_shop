@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from .models import *
 from .serializers import *
@@ -8,3 +7,7 @@ from .serializers import *
 class AboutUsViewSet(ModelViewSet):
     queryset = AboutUs.objects.all()
     serializer_class = AboutUsSerializer
+
+class BenefitViewSet(ModelViewSet):
+    queryset = Benefit.objects.all()
+    serializer_class = BenefitSerializer
