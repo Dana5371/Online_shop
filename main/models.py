@@ -1,7 +1,6 @@
 from django.db import models
 from ckeditor.fields import RichTextField
 
-
 #О нас
 class AboutUs(models.Model):
     title = models.CharField(max_length=150)
@@ -66,4 +65,13 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.answer
+
+#Коллекция
+class Collection(models.Model):
+    image = models.ImageField()
+    title = models.CharField(max_length=55)
+
+    def __str__(self):
+        return self.title
+
 

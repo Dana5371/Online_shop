@@ -25,5 +25,7 @@ class AnswerInLine(admin.TabularInline):
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [AnswerInLine, ]
 
+admin.site.register(Collection)
+
 
 

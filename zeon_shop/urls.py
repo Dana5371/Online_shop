@@ -44,6 +44,7 @@ router.register('news', NewsViewSet)
 router.register('oferro', OferroViewSet)
 router.register('image-help', ImageHelpViewSet)
 router.register('question', QuestionViewSet)
+router.register('collection', CollectionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
