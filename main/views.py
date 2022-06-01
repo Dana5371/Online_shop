@@ -11,3 +11,8 @@ class AboutUsViewSet(ModelViewSet):
 class BenefitViewSet(ModelViewSet):
     queryset = Benefit.objects.all()
     serializer_class = BenefitSerializer
+
+class NewsViewSet(ModelViewSet):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+

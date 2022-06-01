@@ -11,4 +11,5 @@ class AboutUsAdmin(admin.ModelAdmin):
     inlines = [AboutUsImageInLine, ]
 
 admin.site.register(Benefit)
+admin.site.register(News)
 

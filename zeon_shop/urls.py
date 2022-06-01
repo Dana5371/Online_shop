@@ -40,6 +40,7 @@ schema_view = get_schema_view(
 router = DefaultRouter()
 router.register('about-us', AboutUsViewSet)
 router.register('benefit', BenefitViewSet)
+router.register('news', NewsViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

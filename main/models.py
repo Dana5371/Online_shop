@@ -25,3 +25,12 @@ class Benefit(models.Model):
 
     def __str__(self):
         return self.title
+
+#Новости
+class News(models.Model):
+    image = models.ImageField(upload_to='news', blank=True, null=True)
+    title = models.CharField(max_length=150)
+    description = RichTextField()
+
+    def __str__(self):
+        return self.title

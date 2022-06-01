@@ -41,5 +41,9 @@ class BenefitSerializer(serializers.ModelSerializer):
         model = Benefit
         fields = ('icon', 'title', 'description')
 
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
+        fields = ('image', 'title', 'description')
 
         
