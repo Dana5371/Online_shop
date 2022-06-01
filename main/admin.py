@@ -13,4 +13,17 @@ class AboutUsAdmin(admin.ModelAdmin):
 admin.site.register(Benefit)
 admin.site.register(News)
 admin.site.register(Oferro)
+admin.site.register(ImageHelp)
+
+class AnswerInLine(admin.TabularInline):
+    model = Answer
+    max_num = 1
+    min_num = 1
+
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    inlines = [AnswerInLine, ]
+
+
 

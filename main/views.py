@@ -19,3 +19,11 @@ class NewsViewSet(ModelViewSet):
 class OferroViewSet(ModelViewSet):
     queryset = Oferro.objects.all()
     serializer_class = OferrroSerializer
+
+class ImageHelpViewSet(ModelViewSet):
+    queryset = ImageHelp.objects.all()
+    serializer_class = ImageHelpSerializer
+
+class QuestionViewSet(ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
