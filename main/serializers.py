@@ -47,7 +47,3 @@ class CollectionSerializer(serializers.Serializer):
     class Meta:
         model = Collection
         fields = '__all__'
-
-
-
-        
