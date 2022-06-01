@@ -12,4 +12,5 @@ class AboutUsAdmin(admin.ModelAdmin):
 
 admin.site.register(Benefit)
 admin.site.register(News)
+admin.site.register(Oferro)
 

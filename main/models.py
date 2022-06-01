@@ -34,3 +34,11 @@ class News(models.Model):
 
     def __str__(self):
         return self.title
+
+#Публичная оферта
+class Oferro(models.Model):
+    title = models.CharField(max_length=55)
+    description = RichTextField()
+
+    def __str__(self):
+        return self.title

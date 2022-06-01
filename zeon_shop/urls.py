@@ -41,6 +41,7 @@ router = DefaultRouter()
 router.register('about-us', AboutUsViewSet)
 router.register('benefit', BenefitViewSet)
 router.register('news', NewsViewSet)
+router.register('oferro', OferroViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

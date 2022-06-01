@@ -46,4 +46,9 @@ class NewsSerializer(serializers.ModelSerializer):
         model = News
         fields = ('image', 'title', 'description')
 
+class OferrroSerializer(serializers.Serializer):
+    class Meta:
+        model = Oferro
+        fields = ('title', 'description')
+
         

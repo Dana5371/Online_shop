@@ -16,3 +16,6 @@ class NewsViewSet(ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
+class OferroViewSet(ModelViewSet):
+    queryset = Oferro.objects.all()
+    serializer_class = OferrroSerializer
