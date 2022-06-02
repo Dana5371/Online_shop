@@ -38,18 +38,21 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register('about-us', AboutUsViewSet)
-router.register('benefit', BenefitViewSet)
-router.register('news', NewsViewSet)
-router.register('oferro', OferroViewSet)
-router.register('image-help', ImageHelpViewSet)
-router.register('question', QuestionViewSet)
-router.register('collection', CollectionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', schema_view.with_ui()),
+    path('api/v1/about-us/', AboutUsListView.as_view()),
+    path('api/v1/benefit', BenefitListView.as_view()),
+    path('api/v1/news/', NewsListView.as_view()),
+    path('api/v1/oferro/', OferroListView.as_view()),
+    path('api/v1/imagehelp', ImageHelpListView.as_view()),
+    path('api/v1/help/', HelpListView.as_view()),
+    path('api/v1/collection/', CollectionListView.as_view()),
+    path('api/v1/slider/', SliderListView.as_view()),
+    path('api/v1/product/', ProductListView.as_view()),
     path('api/v1/', include(router.urls)),
+    path('api/v1/back_call/', BackCallListView.as_view(), name='back-call'),
 
 ]                
 

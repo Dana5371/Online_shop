@@ -15,17 +15,19 @@ admin.site.register(News)
 admin.site.register(Oferro)
 admin.site.register(ImageHelp)
 
-class AnswerInLine(admin.TabularInline):
-    model = Answer
-    max_num = 1
-    min_num = 1
-
-
-@admin.register(Question)
-class QuestionAdmin(admin.ModelAdmin):
-    inlines = [AnswerInLine, ]
+admin.site.register(Help)
 
 admin.site.register(Collection)
+admin.site.register(Slider)
+admin.site.register(BackCall)
 
+class ProductImageColorInLine(admin.TabularInline):
+    model = ProductImageColor
+    max_num = 8
+    min_num = 1
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    inlines = [ProductImageColorInLine, ]
 
 
