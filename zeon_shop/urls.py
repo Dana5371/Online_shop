@@ -23,6 +23,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from main.views import *
+from main import views
 
 schema_view = get_schema_view(
    openapi.Info(        
@@ -49,8 +50,10 @@ urlpatterns = [
     path('api/v1/imagehelp', ImageHelpListView.as_view()),
     path('api/v1/help/', HelpListView.as_view()),
     path('api/v1/collection/', CollectionListView.as_view()),
+    path('api/v1/backcall/', BackCallListView.as_view()),
     path('api/v1/slider/', SliderListView.as_view()),
     path('api/v1/product/', ProductListView.as_view()),
+    path('api/v1/product/<str:pk>/', views.ProductDetail),
     path('api/v1/', include(router.urls)),
     path('api/v1/back_call/', BackCallListView.as_view(), name='back-call'),
 

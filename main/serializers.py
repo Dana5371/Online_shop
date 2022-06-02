@@ -3,10 +3,20 @@ from rest_framework import serializers
 from main.models import *
 
 #О нас
+class AboutUsImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AboutUsImage
+        fields = ('image',)
+
 class AboutUsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AboutUs
-        fields = '__all__'
+        exclude = ('id',)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['images'] = AboutUsImageSerializer(instance.images.all(), many=True).data
+        return representation
 
 
 #Наши преимущества
@@ -17,17 +27,18 @@ class BenefitSerializer(serializers.ModelSerializer):
 
 
 #Новости
+
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = '__all__'
+        fields = ('title', 'description', 'image')
 
 
 #Публичная оферта
 class OferroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Oferro
-        fields = '__all__'
+        fields = ('title', 'description')
 
 
 #Помощь
@@ -40,11 +51,16 @@ class HelpSerializer(serializers.ModelSerializer):
     class Meta:
         model = Help
         fields = '__all__'
+
+    def to_representation(self, instance):
+        representetion = super.to_representetion(instance)
+        representetion['images'] = ImageHelpSerializer(instance.images.all()).data
+        return representetion
 #Коллекция
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
-        fields = '__all__'
+        fields = ('id', 'image', 'title')
 
 #Cлайдер
 class SliderSerializer(serializers.ModelSerializer):
@@ -57,7 +73,7 @@ class SliderSerializer(serializers.ModelSerializer):
 class BackCallSerializer(serializers.ModelSerializer):
     class Meta:
         model = BackCall
-        fields = '__all__'
+        fields = ('name','number_of_phone')
 
 
 #Товары
@@ -65,6 +81,8 @@ class ProductImageColorSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImageColor
         fields = ('image', 'color')
+
+
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -74,6 +92,8 @@ class ProductSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['images'] = ProductImageColorSerializer(instance.images.all(), many=True).data
         return representation
+
+
 
 
 

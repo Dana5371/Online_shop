@@ -1,4 +1,6 @@
 from rest_framework import generics
+from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -26,12 +28,15 @@ class BenefitListView(APIView):
 
 
 #Новости
-class NewsListView(APIView):
+class EightAPIListPagination(PageNumberPagination):
+    page_size = 8
+    page_query_param = page_size
+    max_page_size = 10
 
-    def get(self, request):
-            news = News.objects.all()
-            serializer = NewsSerializer(news, many=True)
-            return Response(serializer.data)
+class NewsListView(generics.ListAPIView):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    pagination_class = EightAPIListPagination
 
 
 #Публичная оферта
@@ -55,11 +60,11 @@ class HelpListView(APIView):
             return Response(serializer.data)
 
 #Коллекция
-class CollectionListView(APIView):
-    def get(self, request):
-            collection = Collection.objects.all()
-            serializer = CollectionSerializer(collection, many=True)
-            return Response(serializer.data)
+class CollectionListView(generics.ListAPIView):
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
+    pagination_class = EightAPIListPagination
+
 
 #Слайдер
 class SliderListView(APIView):
@@ -77,9 +82,20 @@ class BackCallListView(APIView):
             return Response(serializer.data)
 
 #Товары
-class ProductListView(generics.ListAPIView):
+class ProductListView(APIView):
 
-        queryset = Product.objects.all()
-        serializer_class = ProductSerializer
-        permission_classes = [AllowAny,]
+    def get(self, request):
+            product = Product.objects.all()
+            serializer = ProductSerializer(product, many=True)
+            return Response(serializer.data)
+
+@api_view(['GET'])
+def ProductDetail(request, pk):
+    products = Product.objects.get(id=pk)
+    serializer = ProductSerializer(products, many=False)
+    return Response(serializer.data)
+
+
+
+
 

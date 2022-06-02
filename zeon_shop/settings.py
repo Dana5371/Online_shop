@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'zeon_shop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'zeon_db',
+        'NAME': 'zeon_shop_db',
     }
 }
 

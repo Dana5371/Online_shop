@@ -14,7 +14,6 @@ admin.site.register(Benefit)
 admin.site.register(News)
 admin.site.register(Oferro)
 admin.site.register(ImageHelp)
-
 admin.site.register(Help)
 
 admin.site.register(Collection)

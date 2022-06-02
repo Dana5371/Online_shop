@@ -11,9 +11,10 @@ class AboutUs(models.Model):
     def __str__(self):
         return self.title
 
+
 class AboutUsImage(models.Model):
-    image = models.ImageField(upload_to = 'about', blank = True, null = True)
-    about_us = models.ForeignKey(AboutUs, on_delete=models.CASCADE, related_name='about_us_images')
+    image = models.ImageField(upload_to='about', blank=True, null=True)
+    about_us = models.ForeignKey(AboutUs, on_delete=models.CASCADE, related_name='images')
 
 
 #Наши преимущества
@@ -57,7 +58,6 @@ class Help(models.Model):
 
 #Коллекция
 class Collection(models.Model):
-    slug = models.SlugField(max_length=100, primary_key=True)
     image = models.ImageField()
     title = models.CharField(max_length=55)
 
@@ -113,7 +113,7 @@ class Product(models.Model):
             super(Product, self).save()
 
     def save(self):
-        self.line_of_size = (int(self.line_of_size[3:]) - int(self.line_of_size[0:2])) / 2
+        self.line_of_size = (int(self.line_of_size[3:]) - int(self.line_of_size[0:2])) // 2
         super(Product, self).save()
 
     def __str__(self):
