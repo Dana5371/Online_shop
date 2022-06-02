@@ -54,6 +54,7 @@ urlpatterns = [
     path('api/v1/slider/', SliderListView.as_view()),
     path('api/v1/product/', ProductListView.as_view()),
     path('api/v1/product/<str:pk>/', views.ProductDetail),
+    path('api/v1/collection/<str:pk>/', views.CollectionDetail),
     path('api/v1/', include(router.urls)),
     path('api/v1/back_call/', BackCallListView.as_view(), name='back-call'),
 

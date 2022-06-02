@@ -89,12 +89,18 @@ class ProductListView(APIView):
             serializer = ProductSerializer(product, many=True)
             return Response(serializer.data)
 
+
 @api_view(['GET'])
 def ProductDetail(request, pk):
     products = Product.objects.get(id=pk)
     serializer = ProductSerializer(products, many=False)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def CollectionDetail(request, pk):
+    collections = Collection.objects.get(id=pk)
+    serializer = CollectionProductSerializer(collections, many=False)
+    return Response(serializer.data)
 
 
 

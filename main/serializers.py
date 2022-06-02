@@ -62,6 +62,17 @@ class CollectionSerializer(serializers.ModelSerializer):
         model = Collection
         fields = ('id', 'image', 'title')
 
+class CollectionProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = ('id', 'image', 'title')
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['product'] = ProductSerializer(instance.product.all(), many=True).data
+        return representation
+
+
 #Cлайдер
 class SliderSerializer(serializers.ModelSerializer):
     class Meta:
