@@ -2,4 +2,7 @@ Django
 psycopg2-binary
 Pillow
 djangorestframework
-
+python-decouple
+drf-yasg
+django-ckeditor
+django-colorful
