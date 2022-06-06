@@ -37,7 +37,7 @@ class AboutUsListView(ListAPIView):
 
 #Наши преимущества
 class BenefitListView(ListAPIView):
-    queryset = Benefit
+    queryset = Benefit.objects.all()
     serializer_class = BenefitSerializer
 
 
@@ -50,17 +50,17 @@ class NewsListView(ListAPIView):
 
 #Публичная оферта
 class OferroListView(ListAPIView):
-    queryset = Oferro
+    queryset = Oferro.objects.all()
     serializer_class = OferroSerializer
 
 
 #Помощь
 class ImageHelpListView(ListAPIView):
-    queryset = ImageHelp
+    queryset = ImageHelp.objects.all()
     serializer_class = ImageHelpSerializer
 
 class HelpListView(ListAPIView):
-    queryset = Help
+    queryset = Help.objects.all()
     serializer_class = HelpSerializer
 
 #Коллекция
@@ -77,13 +77,13 @@ class CollectionProductDetailView(RetrieveAPIView):
 
 #Слайдер
 class SliderListView(ListAPIView):
-    queryset = Slider
+    queryset = Slider.objects.all()
     serializer_class = SliderSerializer
 
 
 #Обратный звонок
 class BackCallListView(ListAPIView):
-    queryset = BackCall
+    queryset = BackCall.objects.all()
     serializer_class = BackCallSerializer
 
 
@@ -99,6 +99,7 @@ class ProductListView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
+        print(queryset)
         if not queryset:
             queryset = set(Product.objects.values_list('collection', flat=True))
             queryset = [random.choice(Product.objects.filter(collection=i)) for i in queryset]
@@ -132,11 +133,12 @@ class HitListView(ListAPIView):
 class MainPageListView(ObjectMultipleModelAPIView):
     querylist = [
     {'queryset': Slider.objects.all(), 'serializer_class': SliderSerializer},
-    {'queryset': Product.objects.filter(new=True), 'serializer_class': NewProductSerializer},
-    {'queryset': Product.objects.filter(hit=True), 'serializer_class': HitProductSerializer},
-    {'queryset': Collection.objects.all(), 'serializer_class': CollectionSerializer},
-    {'queryset': Benefit.objects.all(), 'serializer_class': BenefitSerializer}
+    {'queryset': Product.objects.filter(new=True)[:4], 'serializer_class': NewProductSerializer},
+    {'queryset': Product.objects.filter(hit=True)[:8], 'serializer_class': HitProductSerializer},
+    {'queryset': Collection.objects.all()[:4], 'serializer_class': CollectionSerializer},
+    {'queryset': Benefit.objects.all()[:4], 'serializer_class': BenefitSerializer},
     ]
+
 
 class FavoriteListView(ListAPIView):
     queryset = Product.objects.filter(favorite = True)

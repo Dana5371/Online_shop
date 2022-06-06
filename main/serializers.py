@@ -118,9 +118,11 @@ class CollectionProductSerializer(serializers.ModelSerializer):
         fields = ('id', 'image', 'title', 'products')
 
     def get_products(self, obj):
-        products = Product.objects.all()
+        products = Product.objects.filter(collection=obj.id)
         products_data = ProductSerializer(products, many=True)
         return products_data.data
+
+
 #Новинки
 class NewProductSerializer(serializers.ModelSerializer):
     images = ProductImageColorSerializer(many=True)
