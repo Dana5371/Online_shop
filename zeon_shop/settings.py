@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'ckeditor',
     'colorful',
+    'drf_multiple_model',
 
     #libs
     'drf_yasg',
