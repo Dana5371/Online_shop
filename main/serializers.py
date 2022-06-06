@@ -1,3 +1,5 @@
+import random
+
 from django.db.models import Q
 from rest_framework import serializers
 
@@ -44,14 +46,10 @@ class ImageHelpSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class HelpSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Help
         fields = '__all__'
-
-    def to_representation(self, instance):
-        representetion = super.to_representetion(instance)
-        representetion['images'] = ImageHelpSerializer(instance.images.all()).data
-        return representetion
 #Коллекция
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -80,6 +78,14 @@ class ProductImageColorSerializer(serializers.ModelSerializer):
         fields = ('image', 'color')
 
 #Похожие товары
+class ProductSerializer(serializers.ModelSerializer):
+    images = ProductImageColorSerializer(many=True)
+    class Meta:
+        model = Product
+        fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
+                  'description', 'size', 'line_of_size','compound', 'amount','material', 'favorite','images')
+
+
 class SimilarProductSerializer(serializers.ModelSerializer):
     images = ProductImageColorSerializer(many=True)
     class Meta:
@@ -87,26 +93,34 @@ class SimilarProductSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'old_price', 'discount', 'new_price',
                   'size','favorite', 'images')
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductDetailSerializer(serializers.ModelSerializer):
     images = ProductImageColorSerializer(many=True)
     similar = serializers.SerializerMethodField('get_similar_product')
     class Meta:
         model = Product
         fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                  'description', 'size', 'line_of_size','compound', 'amount','material', 'favorite','images' ,'similar')
+                  'description', 'size', 'line_of_size','compound', 'amount','material', 'favorite','images','similar')
 
     def get_similar_product(self, obj):
         similar = Product.objects.filter(Q(collection=obj.collection) & ~Q(id=obj.id))[:5]
         similar_data = SimilarProductSerializer(similar, many=True)
         return similar_data.data
 
+
+
+
 #Детализация коллекции
 class CollectionProductSerializer(serializers.ModelSerializer):
-    products = ProductSerializer(many=True)
+    products = serializers.SerializerMethodField('get_products')
+
     class Meta:
         model = Collection
         fields = ('id', 'image', 'title', 'products')
 
+    def get_products(self, obj):
+        products = Product.objects.all()
+        products_data = ProductSerializer(products, many=True)
+        return products_data.data
 #Новинки
 class NewProductSerializer(serializers.ModelSerializer):
     images = ProductImageColorSerializer(many=True)
@@ -121,7 +135,6 @@ class HitProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'old_price', 'new_price', 'discount', 'size', 'favorite', 'images')
-
 
 
 #Главная страница
@@ -158,7 +171,19 @@ class MainPageSerializer(serializers.Serializer):
         return benefit_data.data
 
 
+class FavoriteSerializer(serializers.ModelSerializer):
+    images = ProductImageColorSerializer(many=True)
+    count_favorite = serializers.SerializerMethodField('get_favorite_count')
 
+
+    class Meta:
+        model = Product
+        fields = ('id', 'discount', 'old_price', 'new_price', 'title', 'size', 'favorite','images','count_favorite')
+
+    def get_favorite_count(self, obj):
+        count_fav = Product.objects.filter(favorite = True)
+        count_fav_data = ProductSerializer(count_fav, many=True)
+        return len(count_fav_data.data)
 
 
 
