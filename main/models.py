@@ -11,7 +11,6 @@ class AboutUs(models.Model):
     def __str__(self):
         return self.title
 
-
 class AboutUsImage(models.Model):
     image = models.ImageField(upload_to='about', blank=True, null=True)
     about_us = models.ForeignKey(AboutUs, on_delete=models.CASCADE, related_name='images')
@@ -19,7 +18,6 @@ class AboutUsImage(models.Model):
 
 #Наши преимущества
 class Benefit(models.Model):
-
     icon = models.ImageField(upload_to='benefit')
     title = models.CharField(max_length=150)
     description = models.TextField()
@@ -71,7 +69,7 @@ class Slider(models.Model):
 
     def __str__(self):
          return 'Some image or link'
-
+2
 #Обратный звонок
 class BackCall(models.Model):
     STATUS = [
@@ -94,9 +92,10 @@ class Product(models.Model):
     article = models.CharField(max_length=150)
     old_price = models.IntegerField()
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
-    new_price = models.IntegerField(blank=True, null=True)
+    new_price = models.IntegerField(blank=True)
     description = RichTextField()
-    line_of_size = models.CharField(max_length=55)
+    size = models.CharField(max_length=55, default='42-50')
+    line_of_size = models.CharField(max_length=55,blank=True, null=True)
     compound = models.CharField(max_length=155)
     amount = models.IntegerField()
     material = models.CharField(max_length=150)
@@ -111,9 +110,7 @@ class Product(models.Model):
             super(Product, self).save()
         else:
             super(Product, self).save()
-
-    def save(self):
-        self.line_of_size = (int(self.line_of_size[3:]) - int(self.line_of_size[0:2])) // 2
+        self.line_of_size = (int(self.size[3:]) - int(self.size[0:2])) // 2
         super(Product, self).save()
 
     def __str__(self):
@@ -125,6 +122,25 @@ class ProductImageColor(models.Model):
     color = RGBColorField()
     products = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
 
+
+class User(models.Model):
+    STATUS = [
+        ('new', 'Новый'),
+        ('issued', 'Оформлен'),
+        ('cancelled', 'Отменен'),
+    ]
+    name = models.CharField(max_length=155)
+    last_name = models.CharField(max_length=155)
+    email = models.EmailField()
+    number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
+    number_of_phone = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False, blank=False)
+    country = models.CharField(max_length=200)
+    city = models.CharField(max_length=155)
+    date_of_order = models.DateTimeField(auto_now=True)
+    status_of_order = models.CharField(choices=STATUS, default='new', max_length=155)
+
+    def __str__(self):
+        return self.email
 
 
 
