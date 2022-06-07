@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     #app
     'main'
+
     
     
 ]
@@ -141,9 +142,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+#     'PAGE_SIZE': 8
+# }
+
+CART_SESSION_ID = 'cart'
+
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 12
+    'PAGINATE_BY': 12,                 # Default to 10
+    'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
+    'MAX_PAGINATE_BY': 12             # Maximum limit allowed when using `?page_size=xxx`.
 }
 
 CKEDITOR_CONFIGS = {
