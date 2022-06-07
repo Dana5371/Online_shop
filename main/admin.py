@@ -21,6 +21,17 @@ class ProductImageColorInLine(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageColorInLine, ]
 
+
+class NumberInLine(admin.TabularInline):
+    model = Number
+    max_num = 2
+    min_num = 1
+
+@admin.register(SecondFooter)
+class SecondFooterAdmin(admin.ModelAdmin):
+    inlines = [NumberInLine, ]
+
+admin.site.register(Footer)
 admin.site.register(Benefit)
 admin.site.register(News)
 admin.site.register(Oferro)
@@ -30,5 +41,7 @@ admin.site.register(Collection)
 admin.site.register(Slider)
 admin.site.register(BackCall)
 admin.site.register(User)
+
+
 
 

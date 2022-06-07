@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     #app
     'main'
+
     
     
 ]
@@ -145,6 +146,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 #     'PAGE_SIZE': 8
 # }
+
+CART_SESSION_ID = 'cart'
 
 REST_FRAMEWORK = {
     'PAGINATE_BY': 12,                 # Default to 10
