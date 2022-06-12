@@ -12,8 +12,5 @@ class ShoppingCart(models.Model):
         verbose_name_plural = verbose_name
         unique_together = ('color',)  # Товар не должен повторяться в корзине.
 
-
     def __str__(self):
-        print(self.products.title)
         return str(self.products.title)
-

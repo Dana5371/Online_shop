@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # app
     'main',
     'cart',
+    'order',
 
 ]
 

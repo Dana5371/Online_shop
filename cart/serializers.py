@@ -5,6 +5,8 @@ from main.models import *
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    """Все продукты"""
+
     class Meta:
         model = Product
         fields = ('id', 'title', 'old_price', 'discount', 'new_price', 'size')
@@ -12,13 +14,15 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductColorSerializer(serializers.ModelSerializer):
+    """Цвета и фото товаров"""
+
     class Meta:
         model = ProductImageColor
         fields = ('color', 'image')
 
 
-#  Информация о продукте в корзине
 class ShopCartDetailSerializer(serializers.ModelSerializer):
+    """Информация о продукте в корзине"""
     products = ProductSerializer(many=False, read_only=True)
 
     class Meta:
@@ -26,8 +30,9 @@ class ShopCartDetailSerializer(serializers.ModelSerializer):
         fields = ("color", 'quantity', 'products')
 
 
-#  корзина
+
 class ShopCartSerializer(serializers.Serializer):
+    """Корзина"""
     quantity = serializers.IntegerField(required=True, label="Количество", min_value=1,
                                         error_messages={
                                             "min_value": "Количество товаров не может быть меньше одного",

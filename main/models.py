@@ -140,7 +140,7 @@ class Product(models.Model):
                                    verbose_name='Коллекция')
     title = models.CharField(max_length=200, verbose_name='Заголовок')
     article = models.CharField(max_length=150, verbose_name='Артикль')
-    old_price = models.CharField(max_length=150,verbose_name='Старая цена')
+    old_price = models.CharField(max_length=150, verbose_name='Старая цена')
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, verbose_name='Скидка')
     new_price = models.IntegerField(blank=True, null=True, verbose_name='Новая цена')
     description = RichTextField(verbose_name='Описание')
@@ -179,32 +179,6 @@ class ProductImageColor(models.Model):
 
     def __str__(self):
         return f'{self.color},{self.image}'
-
-
-class User(models.Model):
-    """Пользователь"""
-    STATUS = [
-        ('new', 'Новый'),
-        ('issued', 'Оформлен'),
-        ('cancelled', 'Отменен'),
-    ]
-    name = models.CharField(max_length=155, verbose_name='Имя')
-    last_name = models.CharField(max_length=155, verbose_name='Фамилия')
-    email = models.EmailField(verbose_name='Почта')
-    number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
-    number_of_phone = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False,
-                                       blank=False, verbose_name='Номер телефона')
-    country = models.CharField(max_length=200, verbose_name='Страна')
-    city = models.CharField(max_length=155, verbose_name='Город')
-    date_of_order = models.DateTimeField(default=datetime.now, verbose_name=u"добавить время")
-    status_of_order = models.CharField(choices=STATUS, default='new', max_length=155, verbose_name='Статус заказа')
-
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.email
 
 
 class Footer(models.Model):
@@ -255,3 +229,29 @@ class Number(models.Model):
     number = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False,
                               blank=False, verbose_name='Номер телефона')
     second_footer = models.ForeignKey(SecondFooter, on_delete=models.CASCADE, related_name='footer')
+
+
+class User(models.Model):
+    """Пользователь"""
+    STATUS = [
+        ('new', 'Новый'),
+        ('issued', 'Оформлен'),
+        ('cancelled', 'Отменен'),
+    ]
+    name = models.CharField(max_length=155, verbose_name='Имя')
+    last_name = models.CharField(max_length=155, verbose_name='Фамилия')
+    email = models.EmailField(verbose_name='Почта')
+    number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
+    number_of_phone = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False,
+                                       blank=False, verbose_name='Номер телефона')
+    country = models.CharField(max_length=200, verbose_name='Страна')
+    city = models.CharField(max_length=155, verbose_name='Город')
+    date_of_order = models.DateTimeField(default=datetime.now, verbose_name=u"добавить время")
+    status_of_order = models.CharField(choices=STATUS, default='new', max_length=155, verbose_name='Статус заказа')
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name

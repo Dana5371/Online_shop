@@ -11,9 +11,12 @@ class AboutUsImageInLine(admin.TabularInline):
 @admin.register(AboutUs)
 class AboutUsAdmin(admin.ModelAdmin):
     inlines = [AboutUsImageInLine, ]
+    list_display = ( 'title', 'text')
 
     def has_add_permission(self, request):
         return False if AboutUs.objects.all() else True
+
+
 
 
 class ProductImageColorInLine(admin.TabularInline):
@@ -25,6 +28,9 @@ class ProductImageColorInLine(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageColorInLine, ]
+    list_display = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
+                    'description', 'line_of_size', 'compound', 'amount', 'material', 'new',
+                    'hit')
 
 
 class NumberInLine(admin.TabularInline):
@@ -36,9 +42,11 @@ class NumberInLine(admin.TabularInline):
 @admin.register(SecondFooter)
 class SecondFooterAdmin(admin.ModelAdmin):
     inlines = [NumberInLine, ]
+    list_display = ('messen', 'link')
 
     def has_add_permission(self, request):
         return False if SecondFooter.objects.all() else True
+
 
 
 @admin.register(Footer)
@@ -47,11 +55,13 @@ class FooterAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False if Footer.objects.all() else True
 
+
 @admin.register(Oferro)
 class OferroAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False if Oferro.objects.all() else True
+
 
 @admin.register(ImageHelp)
 class ImageHelpAdmin(admin.ModelAdmin):
@@ -67,4 +77,3 @@ admin.site.register(Collection)
 admin.site.register(Slider)
 admin.site.register(BackCall)
 admin.site.register(User)
-
