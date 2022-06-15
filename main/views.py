@@ -98,7 +98,7 @@ class BackCallListView(APIView):
     """Обратный звонок"""
 
     # 1. List all
-    def get(self, request, *args, **kwargs):
+    def get(self):
         back = BackCall.objects.all()
         serializer = BackCallSerializer(back, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -124,6 +124,7 @@ class BackcallDeleteApi(DestroyAPIView):
     queryset = BackCall.objects.all()
     serializer_class = BackCallSerializer
 
+
 class ProductListView(ListAPIView):
     """Товар"""
     queryset = Product.objects.all()
@@ -133,13 +134,13 @@ class ProductListView(ListAPIView):
     pagination_class = TwelveAPIListPagination
 
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = self.filter_queryset(self.get_queryset())  # errorerror
         print(queryset)
         if not queryset:
-            queryset = set(Product.objects.values_list('collection', flat=True))
+            queryset = set(Product.objects.values_list('collection', flat=True))  ##errorerrrorrorororororo
             queryset = [random.choice(Product.objects.filter(collection=i)) for i in queryset]
 
-        page = self.paginate_queryset(queryset)
+        page = self.paginate_queryset(queryset)#erororororrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
@@ -202,6 +203,7 @@ class FavoriteListView(ListAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
 
 class FooterListView(ObjectMultipleModelAPIView):
     pagination_class = LimitPagination

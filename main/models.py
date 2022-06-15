@@ -47,6 +47,7 @@ class News(models.Model):
 
     class Meta:
         verbose_name = 'Новости'
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.title
@@ -142,7 +143,7 @@ class Product(models.Model):
     article = models.CharField(max_length=150, verbose_name='Артикль')
     old_price = models.CharField(max_length=150, verbose_name='Старая цена')
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, verbose_name='Скидка')
-    new_price = models.IntegerField(blank=True, null=True, verbose_name='Новая цена')
+    new_price = models.IntegerField(blank=True, null=True, default=0, verbose_name='Новая цена')
     description = RichTextField(verbose_name='Описание')
     size = models.CharField(max_length=55, default='42-50', verbose_name='Размер')
     line_of_size = models.CharField(max_length=55, blank=True, null=True, verbose_name='Линейка')
@@ -185,11 +186,18 @@ class Footer(models.Model):
     """Футер(первая вкладка)"""
     logo = models.ImageField(upload_to='footer_header', verbose_name='Логотип')
     imformation = models.TextField(verbose_name='Информация')
-    number = models.CharField(max_length=15)
+    number = models.CharField(max_length=15, verbose_name='Номер')
 
     class Meta:
         verbose_name = 'Футер(первая вкладка)'
         verbose_name_plural = verbose_name
+
+    def save(self):
+        if str(self.logo).endswith('png') or str(self.logo).endswith('svg'):
+            super(Footer, self).save()
+        else:
+            return 'heheh'
+        super(Footer, self).save()
 
     def __str__(self):
         return self.number
@@ -225,8 +233,8 @@ class SecondFooter(models.Model):
 
 class Number(models.Model):
     """Номера для футера"""
-    number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
-    number = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False,
+    number_check = RegexValidator(regex=r"^1[3-9]\d{9}$]")
+    number = models.CharField(validators=[number_check], max_length=14, unique=True, null=False,
                               blank=False, verbose_name='Номер телефона')
     second_footer = models.ForeignKey(SecondFooter, on_delete=models.CASCADE, related_name='footer')
 

@@ -13,44 +13,31 @@ class ProductSerializer(serializers.ModelSerializer):
         ref_name = 'ProductCart'
 
 
-class ProductColorSerializer(serializers.ModelSerializer):
-    """Цвета и фото товаров"""
-
-    class Meta:
-        model = ProductImageColor
-        fields = ('color', 'image')
-
-
+#  Информация о продукте в корзине
 class ShopCartDetailSerializer(serializers.ModelSerializer):
-    """Информация о продукте в корзине"""
     products = ProductSerializer(many=False, read_only=True)
 
     class Meta:
         model = ShoppingCart
-        fields = ("color", 'quantity', 'products')
+        fields = ("products", "quantity")
 
 
-
+#  корзина
 class ShopCartSerializer(serializers.Serializer):
-    """Корзина"""
     quantity = serializers.IntegerField(required=True, label="Количество", min_value=1,
                                         error_messages={
                                             "min_value": "Количество товаров не может быть меньше одного",
                                             "required": "Пожалуйста, выберите количество покупок"
                                         })
-    color = serializers.PrimaryKeyRelatedField(required=True, queryset=ProductImageColor.objects.all())
-    #  Обработка внешнего ключа сериализатора должна использовать это поле, если это ModelSerializer
-    #  также может использовать это поле, но не нужно указывать набор запросов
+    #  Обработка внешнего ключа сериализатора должна использовать это поле, если это ModelSerializer также может использовать это поле, но не нужно указывать набор запросов
     products = serializers.PrimaryKeyRelatedField(required=True, queryset=Product.objects.all())
 
     def create(self, validated_data):
-        print(validated_data)
         quantity = validated_data["quantity"]
         products = validated_data["products"]
-        color = validated_data["color"]
-        print(type(color))
 
-        existed = ShoppingCart.objects.filter(products=products, color=color)
+        existed = ShoppingCart.objects.filter(products=products)
+        print(existed)
 
         #  Определите, есть ли в данный момент запись
         if existed:
@@ -64,6 +51,6 @@ class ShopCartSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         #  Изменить количество товара
-        instance.amount = validated_data["quantity"]
+        instance.quantity = validated_data["quantity"]
         instance.save()
         return instance
