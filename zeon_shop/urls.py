@@ -21,24 +21,29 @@ from rest_framework.routers import DefaultRouter
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from cart.views import *
+from order.views import OrderViewset
 
 from main.views import *
 from main import views
 
 schema_view = get_schema_view(
-   openapi.Info(        
-      title="ZEON_SHOP",
-      default_version='v1',
-      description="Test description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="ZEON_SHOP",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 router = DefaultRouter()
+router.register(r'cart', ShoppingCartViewset, basename="cart")
+router.register(r'order', OrderViewset, basename="order")
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -50,7 +55,8 @@ urlpatterns = [
     path('api/v1/imagehelp', ImageHelpListView.as_view()),
     path('api/v1/help/', HelpListView.as_view()),
     path('api/v1/collection/', CollectionListView.as_view()),
-    path('api/v1/backcall/', BackCallListView.as_view()),
+    path('api/v1/backcall', BackCallListView.as_view()),
+    path('api/v1/backcall/<int:pk>', BackcallDeleteApi.as_view()),
     path('api/v1/slider/', SliderListView.as_view()),
     path('api/v1/product/', ProductListView.as_view()),
     path('api/v1/product/<str:pk>/', ProductDetailView.as_view()),
@@ -58,7 +64,8 @@ urlpatterns = [
     path('api/v1/main-page/', MainPageListView.as_view()),
     path('api/v1/new-product/', NewListView.as_view()),
     path('api/v1/favorite/', FavoriteListView.as_view()),
+    path('api/v1/footer/', FooterListView.as_view()),
     path('api/v1/', include(router.urls)),
-]                
+]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
