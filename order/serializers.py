@@ -6,6 +6,7 @@ from cart.serializers import ShopCartSerializer
 from cart.serializers import ProductSerializer
 from main.models import Product, ProductImageColor, User
 from order.models import Order
+from main.serializers import ProductSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,11 +23,25 @@ class ProductImageColorSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-
+    # images = ProductImageColorSerializer(many=True)
+    title = serializers.CharField(source='products.title')
+    id = serializers.IntegerField(source='products.id')
+    # images = serializers.ImageField(source='products.image')
 
     class Meta:
-        model = Product
-        fields = "__all__"
+        model = ShoppingCart
+        fields = ('id', 'title')
+        ref_name = 'ProductOrder'
+
+
+class ProductDetaiSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source='products.title')
+    id = serializers.IntegerField(source='products.id')
+    collection = serializers.CharField(source='products.collection')
+
+    class Meta:
+        model = ShoppingCart
+        fields = ('id', 'title')
         ref_name = 'ProductOrder'
 
 
@@ -41,9 +56,8 @@ class OrderSerializer(serializers.ModelSerializer):
     discount = serializers.IntegerField(read_only=True)
     quantity_of_products = serializers.IntegerField(read_only=True)
     add_time = serializers.DateTimeField(read_only=True)
-    products = serializers.CharField(read_only=True)
 
-
+    # products = serializers.CharField(read_only=True)
 
     #  Функция создания номера заказа
     def generate_order_sn(self):
@@ -61,14 +75,22 @@ class OrderSerializer(serializers.ModelSerializer):
         attrs["order_sn"] = self.generate_order_sn()
         return attrs
 
+    products = ProductSerializer(many=True)
+
     class Meta:
         model = Order
         fields = "__all__"
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        print(representation)
+        representation['products'] = ProductSerializer(instance.products, many=True).data
+        return representation
+
 
 #  Информация для заказа
 class OrderDetailSerializer(serializers.ModelSerializer):
-    products = ProductSerializer(many=False)
+    products = ProductSerializer(many=True)
 
     class Meta:
         model = Order
@@ -80,6 +102,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         for shop_cart in shop_carts:
             order_products = Order()
             order_products.products = shop_cart.products
+
             order_products.product_quantity = shop_cart.quantity
             order_products.save()
             shop_cart.delete()

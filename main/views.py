@@ -140,7 +140,7 @@ class ProductListView(ListAPIView):
             queryset = set(Product.objects.values_list('collection', flat=True))  ##errorerrrorrorororororo
             queryset = [random.choice(Product.objects.filter(collection=i)) for i in queryset]
 
-        page = self.paginate_queryset(queryset)#erororororrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+        page = self.paginate_queryset(queryset)  # erororororrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
@@ -175,10 +175,12 @@ class LimitPagination(MultipleModelLimitOffsetPagination):
 
 # Главная страница
 class MainPageListView(ObjectMultipleModelAPIView):
-    pagination_class = LimitPagination
+    # pagination_class = LimitPagination
     querylist = [
         {'queryset': Slider.objects.all(), 'serializer_class': SliderSerializer},
-        {'queryset': Product.objects.filter(new=True)[:4], 'serializer_class': NewProductSerializer},
+        # 'pagination_class': FourAPIListPagination},
+        {'queryset': Product.objects.filter(new=True)[:4], 'serializer_class': NewProductSerializer,
+         'pagination_class': FourAPIListPagination},
         {'queryset': Product.objects.filter(hit=True)[:8], 'serializer_class': HitProductSerializer},
         {'queryset': Collection.objects.all()[:4], 'serializer_class': CollectionSerializer},
         {'queryset': Benefit.objects.all()[:4], 'serializer_class': BenefitSerializer}

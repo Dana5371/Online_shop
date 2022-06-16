@@ -30,6 +30,9 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
                     'description', 'line_of_size', 'compound', 'amount', 'material', 'new',
                     'hit')
+    list_filter = ('hit', 'new')
+    search_fields = ("title__startswith",)
+
 
 
 class NumberInLine(admin.TabularInline):
@@ -84,6 +87,7 @@ class BenefitAdmin(admin.ModelAdmin):
 @admin.register(Help)
 class HelpAdmin(admin.ModelAdmin):
     list_display = ('question', 'answer')
+
 
 
 @admin.register(Collection)

@@ -35,19 +35,37 @@ from main.models import Product, User
 
 
 class Order(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    STATUS = [
+        ('new', 'Новый'),
+        ('issued', 'Оформлен'),
+        ('cancelled', 'Отменен'),
+    ]
+    name = models.CharField(max_length=155, verbose_name='Имя')
+    last_name = models.CharField(max_length=155, verbose_name='Фамилия')
+    number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
+    number_of_phone = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False,
+                                       blank=False, verbose_name='Номер телефона')
+    country = models.CharField(max_length=200, verbose_name='Страна')
+    city = models.CharField(max_length=155, verbose_name='Город')
+    status_of_order = models.CharField(choices=STATUS, default='new', max_length=155, verbose_name='Статус заказа')
 
     order_sn = models.CharField(max_length=30, null=True, blank=True, unique=True, verbose_name="порядковый номер")
     total_price = models.PositiveIntegerField(default=0, verbose_name='Всего')
     price_with_discount = models.PositiveIntegerField(default=0, verbose_name='Итог')
     discount = models.PositiveIntegerField(default=0, verbose_name='Скидка')
-    products = models.CharField(max_length=255)
+    products = models.ManyToManyField(ShoppingCart, blank=True)
     add_time = models.DateTimeField(default=datetime.now, verbose_name="добавить время")
     quantity_of_products = models.PositiveIntegerField(default=0, verbose_name='Кол-во продуктов')
 
     def save(self, *args, **kwargs):
-        self.products = str(i.products for i in ShoppingCart.objects.all())
+        from time import strftime
+        from random import Random
+        random_ins = Random()
+        self.order_sn = "{time_str}{ranstr}".format(time_str=strftime("%Y%m%d%H%M%S"),
+                                                    ranstr=random_ins.randint(10, 99))
+        # print(ShoppingCart.objects.all())
+        self.products = str(ShoppingCart.objects.all())
+
         self.quantity_of_products = sum(i.products.amount * i.quantity for i in ShoppingCart.objects.all())
         self.total_price = sum(int(i.products.old_price) * int(i.quantity) for i in ShoppingCart.objects.all())
         self.price_with_discount = sum(int(i.products.new_price) * int(i.quantity)
