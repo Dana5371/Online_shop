@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from rest_framework import mixins, viewsets
 
 from cart.models import ShoppingCart
@@ -10,7 +7,6 @@ from order.serializers import OrderSerializer, OrderDetailSerializer
 
 class OrderViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin,
                    viewsets.GenericViewSet):
-    # queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
     def get_queryset(self):

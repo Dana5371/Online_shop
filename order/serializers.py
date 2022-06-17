@@ -4,15 +4,9 @@ from rest_framework import serializers
 from cart.models import ShoppingCart
 from cart.serializers import ShopCartSerializer
 from cart.serializers import ProductSerializer
-from main.models import Product, ProductImageColor, User
+from main.models import Product, ProductImageColor
 from order.models import Order
 from main.serializers import ProductSerializer
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = "__all__"
 
 
 class ProductImageColorSerializer(serializers.ModelSerializer):
@@ -23,10 +17,8 @@ class ProductImageColorSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    # images = ProductImageColorSerializer(many=True)
     title = serializers.CharField(source='products.title')
     id = serializers.IntegerField(source='products.id')
-    # images = serializers.ImageField(source='products.image')
 
     class Meta:
         model = ShoppingCart
@@ -34,22 +26,26 @@ class ProductSerializer(serializers.ModelSerializer):
         ref_name = 'ProductOrder'
 
 
-class ProductDetaiSerializer(serializers.ModelSerializer):
+class ProductDetailSerializer(serializers.ModelSerializer):
     title = serializers.CharField(source='products.title')
     id = serializers.IntegerField(source='products.id')
     collection = serializers.CharField(source='products.collection')
+    old_price = serializers.CharField(source='products.old_price')
+    new_price = serializers.CharField(source='products.new_price')
+    discount = serializers.CharField(source='products.discount')
+    amount = serializers.CharField(source='products.amount')
+    size = serializers.CharField(source='products.size')
+    line = serializers.CharField(source='products.line_of_size')
 
     class Meta:
         model = ShoppingCart
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'collection', 'old_price', 'new_price', 'discount', 'amount', 'size', 'line')
         ref_name = 'ProductOrder'
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    # user = serializers.HiddenField(
-    #     default=serializers.CurrentUserDefault()
-    # )
-    #  Некоторая информация в заказе не может быть изменена самостоятельно
+    products = serializers.SerializerMethodField('get_product')
+    """Некоторая информация в заказе не может быть изменена самостоятельно"""
     order_sn = serializers.CharField(read_only=True)
     total_price = serializers.IntegerField(read_only=True)
     price_with_discount = serializers.IntegerField(read_only=True)
@@ -57,44 +53,46 @@ class OrderSerializer(serializers.ModelSerializer):
     quantity_of_products = serializers.IntegerField(read_only=True)
     add_time = serializers.DateTimeField(read_only=True)
 
-    # products = serializers.CharField(read_only=True)
+    """Функция создания номера заказа"""
 
-    #  Функция создания номера заказа
     def generate_order_sn(self):
         #  Текущее время + случайное число
         from time import strftime
         from random import Random
         random_ins = Random()
         order_sn = "{time_str}{ranstr}".format(time_str=strftime("%Y%m%d%H%M%S"),
-                                               # userid=self.context["request"].user.id,
                                                ranstr=random_ins.randint(10, 99))
         return order_sn
 
-    #  Сгенерировать номер заказа
+    """Сгенерировать номер заказа"""
+
     def validate(self, attrs):
         attrs["order_sn"] = self.generate_order_sn()
         return attrs
-
-    products = ProductSerializer(many=True)
 
     class Meta:
         model = Order
         fields = "__all__"
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        print(representation)
-        representation['products'] = ProductSerializer(instance.products, many=True).data
-        return representation
+    def get_product(self, obj):
+        count_fav = ShoppingCart.objects.all()
+        count_fav_data = ProductSerializer(count_fav, many=True)
+        return count_fav_data.data
 
 
-#  Информация для заказа
+
 class OrderDetailSerializer(serializers.ModelSerializer):
-    products = ProductSerializer(many=True)
+    """Информация для заказа"""
+    products = serializers.SerializerMethodField('get_product')
 
     class Meta:
         model = Order
         fields = '__all__'
+
+    def get_product(self, obj):
+        count_fav = ShoppingCart.objects.all()
+        count_fav_data = ProductDetailSerializer(count_fav, many=True)
+        return count_fav_data.data
 
     def perform_create(self, serializer, *args, **kwargs):
         order = serializer.save()

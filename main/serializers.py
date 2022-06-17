@@ -1,4 +1,3 @@
-
 from django.db.models import Q
 from rest_framework import serializers
 
@@ -6,7 +5,7 @@ from main.models import *
 
 
 class AboutUsImageSerializer(serializers.ModelSerializer):
-    """О нас"""
+    """О нас фотографии"""
 
     class Meta:
         model = AboutUsImage
@@ -30,25 +29,25 @@ class BenefitSerializer(serializers.ModelSerializer):
         fields = ('icon', 'title', 'description')
 
 
-
 class NewsSerializer(serializers.ModelSerializer):
     """Новости"""
+
     class Meta:
         model = News
         fields = ('title', 'description', 'image')
 
 
-
 class OferroSerializer(serializers.ModelSerializer):
     """Публичная оферта"""
+
     class Meta:
         model = Oferro
         fields = ('title', 'description')
 
 
-
 class ImageHelpSerializer(serializers.ModelSerializer):
     """Фотография для помощи"""
+
     class Meta:
         model = ImageHelp
         fields = '__all__'
@@ -56,22 +55,23 @@ class ImageHelpSerializer(serializers.ModelSerializer):
 
 class HelpSerializer(serializers.ModelSerializer):
     """Помощь"""
+
     class Meta:
         model = Help
         fields = '__all__'
 
 
-
 class CollectionSerializer(serializers.ModelSerializer):
     """Коллекция"""
+
     class Meta:
         model = Collection
         fields = ('id', 'image', 'title')
 
 
-
 class SliderSerializer(serializers.ModelSerializer):
     """Слайдер"""
+
     class Meta:
         model = Slider
         fields = '__all__'
@@ -79,22 +79,18 @@ class SliderSerializer(serializers.ModelSerializer):
 
 class BackCallSerializer(serializers.ModelSerializer):
     """Обратный звонок"""
+
     class Meta:
         model = BackCall
-        fields = ('id','name', 'number_of_phone')
-
-class BackCallPostSerializer(serializers.ModelSerializer):
-  class Meta:
-        model = BackCall
-        fields = ('name', 'number_of_phone', 'date_of_call', 'status')
+        fields = ('id', 'name', 'number_of_phone', 'type')
 
 
 class ProductImageColorSerializer(serializers.ModelSerializer):
     """Фотография и цвет для товара"""
+
     class Meta:
         model = ProductImageColor
         fields = ('image', 'color')
-
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -104,7 +100,8 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                  'description', 'size', 'line_of_size', 'compound', 'amount', 'material', 'favorite', 'images')
+                  'description', 'size', 'line_of_size', 'compound', 'amount', 'material',
+                  'favorite', 'images')
 
 
 class SimilarProductSerializer(serializers.ModelSerializer):
@@ -118,14 +115,15 @@ class SimilarProductSerializer(serializers.ModelSerializer):
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
+    """Детализация товара"""
     images = ProductImageColorSerializer(many=True)
     similar = serializers.SerializerMethodField('get_similar_product')
 
     class Meta:
         model = Product
         fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                  'description', 'size', 'line_of_size', 'compound', 'amount', 'material', 'favorite', 'images',
-                  'similar')
+                  'description', 'size', 'line_of_size', 'compound', 'amount', 'material',
+                  'favorite', 'images', 'similar')
 
     def get_similar_product(self, obj):
         similar = Product.objects.filter(Q(collection=obj.collection) & ~Q(id=obj.id))[:5]
@@ -133,8 +131,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         return similar_data.data
 
 
-# Детализация коллекции
 class CollectionProductSerializer(serializers.ModelSerializer):
+    """Детализация коллекции"""
     products = serializers.SerializerMethodField('get_products')
 
     class Meta:
@@ -147,8 +145,8 @@ class CollectionProductSerializer(serializers.ModelSerializer):
         return products_data.data
 
 
-# Новинки
 class NewProductSerializer(serializers.ModelSerializer):
+    """Новинки"""
     images = ProductImageColorSerializer(many=True)
 
     class Meta:
@@ -156,8 +154,8 @@ class NewProductSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'old_price', 'new_price', 'discount', 'size', 'favorite', 'images')
 
 
-# Хит продаж
 class HitProductSerializer(serializers.ModelSerializer):
+    """Хит продаж"""
     images = ProductImageColorSerializer(many=True)
 
     class Meta:
@@ -166,6 +164,7 @@ class HitProductSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    """Избранные"""
     images = ProductImageColorSerializer(many=True)
     count_favorite = serializers.SerializerMethodField('get_favorite_count')
 
@@ -180,24 +179,21 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class FooterSerializer(serializers.ModelSerializer):
+    """Футер"""
     class Meta:
         model = Footer
-        fields = ('logo','imformation', 'number')
+        fields = ('logo', 'imformation', 'number')
 
 
 class NumberSerializer(serializers.ModelSerializer):
+    """Номера для футера"""
     class Meta:
         model = Number
         fields = ('number',)
 
 
 class SecondFooterSerializer(serializers.ModelSerializer):
-
+    """Футер вторая вкладка"""
     class Meta:
         model = SecondFooter
         fields = ('messen', 'link')
-
-
-
-
-

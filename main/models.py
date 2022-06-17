@@ -1,9 +1,17 @@
 from datetime import datetime
 
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from ckeditor.fields import RichTextField
 from colorful.fields import RGBColorField
+
+
+def png_or_svg(value):
+    """Валидация на формат изображения"""
+
+    if not str(value).endswith('png') or str(value).endswith('svg'):
+        raise ValidationError("Не правильный формат лого")
 
 
 class AboutUs(models.Model):
@@ -27,7 +35,7 @@ class AboutUsImage(models.Model):
 
 class Benefit(models.Model):
     """Наши преимущества"""
-    icon = models.ImageField(upload_to='benefit')
+    icon = models.ImageField(upload_to='benefit', validators=[png_or_svg])
     title = models.CharField(max_length=150)
     description = models.TextField()
 
@@ -124,6 +132,7 @@ class BackCall(models.Model):
     number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
     number_of_phone = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False, blank=False,
                                        verbose_name='Номер телефона')
+    type = models.CharField(max_length=255, default='Обратный звонок', verbose_name='Тип обращения')
     date_of_call = models.DateTimeField(default=datetime.now, verbose_name=u"добавить время")
     status = models.CharField(choices=STATUS, default='no', max_length=155)
 
@@ -184,7 +193,7 @@ class ProductImageColor(models.Model):
 
 class Footer(models.Model):
     """Футер(первая вкладка)"""
-    logo = models.ImageField(upload_to='footer_header', verbose_name='Логотип')
+    logo = models.ImageField(upload_to='footer_header', verbose_name='Логотип', validators=[png_or_svg])
     imformation = models.TextField(verbose_name='Информация')
     number = models.CharField(max_length=15, verbose_name='Номер')
 
@@ -233,33 +242,7 @@ class SecondFooter(models.Model):
 
 class Number(models.Model):
     """Номера для футера"""
-    number_check = RegexValidator(regex=r"^1[3-9]\d{9}$]")
+    number_check = RegexValidator(regex=r"^\+?1?\d{8,15}$")
     number = models.CharField(validators=[number_check], max_length=14, unique=True, null=False,
                               blank=False, verbose_name='Номер телефона')
     second_footer = models.ForeignKey(SecondFooter, on_delete=models.CASCADE, related_name='footer')
-
-
-class User(models.Model):
-    """Пользователь"""
-    STATUS = [
-        ('new', 'Новый'),
-        ('issued', 'Оформлен'),
-        ('cancelled', 'Отменен'),
-    ]
-    name = models.CharField(max_length=155, verbose_name='Имя')
-    last_name = models.CharField(max_length=155, verbose_name='Фамилия')
-    email = models.EmailField(verbose_name='Почта')
-    number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
-    number_of_phone = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False,
-                                       blank=False, verbose_name='Номер телефона')
-    country = models.CharField(max_length=200, verbose_name='Страна')
-    city = models.CharField(max_length=155, verbose_name='Город')
-    date_of_order = models.DateTimeField(default=datetime.now, verbose_name=u"добавить время")
-    status_of_order = models.CharField(choices=STATUS, default='new', max_length=155, verbose_name='Статус заказа')
-
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.name
