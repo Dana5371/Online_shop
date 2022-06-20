@@ -46,34 +46,21 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ("title__startswith",)
 
 
-class NumberInLine(admin.TabularInline):
-    model = Number
-    max_num = 2
+# class NumberInLine(admin.TabularInline):
+#     model = Number
+#     max_num = 2
+#     min_num = 1
+
+
+class SecondFooterInLine(admin.TabularInline):
+    model = SecondFooter
     min_num = 1
-
-
-@admin.register(SecondFooter)
-class SecondFooterAdmin(admin.ModelAdmin):
-    inlines = [NumberInLine, ]
-    list_display = ('messen', 'link')
-
-    def has_add_permission(self, request):
-        return False if SecondFooter.objects.all() else True
-
-    def delete(self):
-        return False
-
-    def changelist_view(self, request, extra_context=None):
-        if SecondFooter.objects.all().first():
-            footer = SecondFooter.objects.all().first()
-            return redirect(request.path + str(footer.id))
-        elif SecondFooter.objects.all().count() < 1:
-            return redirect(request.path + 'add')
 
 
 @admin.register(Footer)
 class FooterAdmin(admin.ModelAdmin):
     list_display = ('imformation', 'number', 'logo')
+    inlines = [SecondFooterInLine, ]
 
     def has_add_permission(self, request):
         return False if Footer.objects.all() else True

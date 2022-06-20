@@ -201,13 +201,6 @@ class Footer(models.Model):
         verbose_name = 'Футер(первая вкладка)'
         verbose_name_plural = verbose_name
 
-    def save(self):
-        if str(self.logo).endswith('png') or str(self.logo).endswith('svg'):
-            super(Footer, self).save()
-        else:
-            return 'heheh'
-        super(Footer, self).save()
-
     def __str__(self):
         return self.number
 
@@ -223,6 +216,7 @@ class SecondFooter(models.Model):
     ]
     messen = models.CharField(choices=MESSENGER, max_length=155, verbose_name='Соцсеть')
     link = models.CharField(max_length=16, blank=True, null=True)
+    footer = models.ForeignKey(Footer, on_delete=models.CASCADE)
 
     def save(self):
         if self.messen == 'whatsapp':
@@ -240,9 +234,4 @@ class SecondFooter(models.Model):
         return self.messen
 
 
-class Number(models.Model):
-    """Номера для футера"""
-    number_check = RegexValidator(regex=r"^\+?1?\d{8,15}$")
-    number = models.CharField(validators=[number_check], max_length=14, unique=True, null=False,
-                              blank=False, verbose_name='Номер телефона')
-    second_footer = models.ForeignKey(SecondFooter, on_delete=models.CASCADE, related_name='footer')
+

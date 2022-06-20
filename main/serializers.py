@@ -117,18 +117,18 @@ class SimilarProductSerializer(serializers.ModelSerializer):
 class ProductDetailSerializer(serializers.ModelSerializer):
     """Детализация товара"""
     images = ProductImageColorSerializer(many=True)
-    similar = serializers.SerializerMethodField('get_similar_product')
+    alike = serializers.SerializerMethodField('get_alike_product')
 
     class Meta:
         model = Product
         fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
                   'description', 'size', 'line_of_size', 'compound', 'amount', 'material',
-                  'favorite', 'images', 'similar')
+                  'favorite', 'images', 'alike')
 
-    def get_similar_product(self, obj):
-        similar = Product.objects.filter(Q(collection=obj.collection) & ~Q(id=obj.id))[:5]
-        similar_data = SimilarProductSerializer(similar, many=True)
-        return similar_data.data
+    def get_alike_product(self, obj):
+        alike = Product.objects.filter(Q(collection=obj.collection) & ~Q(id=obj.id))[:5]
+        alike_data = SimilarProductSerializer(alike, many=True).data
+        return alike_data
 
 
 class CollectionProductSerializer(serializers.ModelSerializer):
@@ -166,34 +166,23 @@ class HitProductSerializer(serializers.ModelSerializer):
 class FavoriteSerializer(serializers.ModelSerializer):
     """Избранные"""
     images = ProductImageColorSerializer(many=True)
-    count_favorite = serializers.SerializerMethodField('get_favorite_count')
 
     class Meta:
         model = Product
-        fields = ('id', 'discount', 'old_price', 'new_price', 'title', 'size', 'favorite', 'images', 'count_favorite')
-
-    def get_favorite_count(self, obj):
-        count_fav = Product.objects.filter(favorite=True)
-        count_fav_data = ProductSerializer(count_fav, many=True)
-        return len(count_fav_data.data)
+        fields = ('id', 'discount', 'old_price', 'new_price', 'title', 'size', 'favorite', 'images')
 
 
 class FooterSerializer(serializers.ModelSerializer):
     """Футер"""
+
     class Meta:
         model = Footer
         fields = ('logo', 'imformation', 'number')
 
 
-class NumberSerializer(serializers.ModelSerializer):
-    """Номера для футера"""
-    class Meta:
-        model = Number
-        fields = ('number',)
-
-
 class SecondFooterSerializer(serializers.ModelSerializer):
     """Футер вторая вкладка"""
+
     class Meta:
         model = SecondFooter
         fields = ('messen', 'link')

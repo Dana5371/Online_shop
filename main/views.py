@@ -44,6 +44,7 @@ class BenefitListView(ListAPIView):
     """Наши преимущества"""
     queryset = Benefit.objects.all()
     serializer_class = BenefitSerializer
+    pagination_class = FourAPIListPagination
 
 
 class NewsListView(ListAPIView):
@@ -66,6 +67,13 @@ class HelpListView(ObjectMultipleModelAPIView):
         {'queryset': Help.objects.all(), 'serializer_class': HelpSerializer},
         {'queryset': ImageHelp.objects.all(), 'serializer_class': ImageHelpSerializer}
     ]
+
+
+class CollectionMainPageListView(ListAPIView):
+    """Коллекция для главной страницы"""
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
+    pagination_class = FourAPIListPagination
 
 
 class CollectionListView(ListAPIView):
@@ -145,7 +153,6 @@ class FavoriteListView(ListAPIView):
     """Избранные"""
     queryset = Product.objects.filter(favorite=True)
     serializer_class = FavoriteSerializer
-    pagination_class = TwelveAPIListPagination
 
     # если нет избранных,вытаскиваем рандомом 5 продуктов из разных коллекций
     def list(self, request, *args, **kwargs):
@@ -158,7 +165,8 @@ class FavoriteListView(ListAPIView):
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response(
+            {"Products": serializer.data, "Favorite products": len(list(Product.objects.filter(favorite=True)))})
 
 
 class FooterListView(ObjectMultipleModelAPIView):
@@ -167,5 +175,4 @@ class FooterListView(ObjectMultipleModelAPIView):
     querylist = [
         {'queryset': Footer.objects.all(), 'serializer_class': FooterSerializer},
         {'queryset': SecondFooter.objects.all(), 'serializer_class': SecondFooterSerializer},
-        {'queryset': Number.objects.all(), 'serializer_class': NumberSerializer},
     ]
