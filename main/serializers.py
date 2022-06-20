@@ -100,7 +100,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                  'description', 'size', 'line_of_size', 'compound', 'amount', 'material',
+                  'description', 'size', 'line_of_size', 'compound', 'material',
                   'favorite', 'images')
 
 
@@ -122,8 +122,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                  'description', 'size', 'line_of_size', 'compound', 'amount', 'material',
-                  'favorite', 'images', 'alike')
+                  'description', 'size', 'line_of_size', 'compound', 'material', 'favorite', 'images', 'alike')
 
     def get_alike_product(self, obj):
         alike = Product.objects.filter(Q(collection=obj.collection) & ~Q(id=obj.id))[:5]

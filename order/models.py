@@ -1,8 +1,12 @@
+from django.db import models
+
+# Create your models here.
+
 from datetime import datetime
 from django.core.validators import RegexValidator
 
 from django.db import models
-from cart.models import ShoppingCart
+from cart.models import Cart
 
 
 class Order(models.Model):
@@ -25,7 +29,7 @@ class Order(models.Model):
     total_price = models.PositiveIntegerField(default=0, verbose_name='Всего')
     price_with_discount = models.PositiveIntegerField(default=0, verbose_name='Итог')
     discount = models.PositiveIntegerField(default=0, verbose_name='Скидка')
-    products = models.ManyToManyField(ShoppingCart)
+    products = models.ManyToManyField(Cart)
     add_time = models.DateTimeField(default=datetime.now, verbose_name="добавить время")
     quantity_of_products = models.PositiveIntegerField(default=0, verbose_name='Кол-во продуктов')
 
@@ -37,10 +41,10 @@ class Order(models.Model):
         self.order_sn = "{time_str}{ranstr}".format(time_str=strftime("%Y%m%d%H%M%S"),
                                                     ranstr=random_ins.randint(10, 99))
         """Счет итога"""
-        self.quantity_of_products = sum(i.products.amount * i.quantity for i in ShoppingCart.objects.all())
-        self.total_price = sum(int(i.products.old_price) * int(i.quantity) for i in ShoppingCart.objects.all())
-        self.price_with_discount = sum(int(i.products.new_price) * int(i.quantity)
-                                       for i in ShoppingCart.objects.all())
+        self.quantity_of_products = sum(i.quantity for i in Cart.objects.all())
+        self.total_price = sum(int(i.color.products.old_price) * int(i.quantity) for i in Cart.objects.all())
+        self.price_with_discount = sum(int(i.color.products.new_price) * int(i.quantity)
+                                       for i in Cart.objects.all())
         self.discount = self.total_price - self.price_with_discount
         super(Order, self).save(*args, **kwargs)
 
@@ -50,3 +54,5 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.order_sn)
+
+

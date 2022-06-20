@@ -4,6 +4,6 @@ from django.contrib import admin
 from .models import *
 
 
-@admin.register(ShoppingCart)
+@admin.register(Cart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('products', 'quantity')
+    list_display = ('color', 'quantity')

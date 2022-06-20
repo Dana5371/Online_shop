@@ -1,12 +1,12 @@
-#  порядок
 from rest_framework import serializers
 
-from cart.models import ShoppingCart
-from cart.serializers import ShopCartSerializer
+from cart.models import Cart
 from cart.serializers import ProductSerializer
-from main.models import Product, ProductImageColor
-from order.models import Order
-from main.serializers import ProductSerializer
+from main.models import ProductImageColor
+from .models import Order
+
+
+# from product.serializers import ProductSerializer
 
 
 class ProductImageColorSerializer(serializers.ModelSerializer):
@@ -17,29 +17,28 @@ class ProductImageColorSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(source='products.title')
-    id = serializers.IntegerField(source='products.id')
+    title = serializers.CharField(source='color.products.title')
+    id = serializers.IntegerField(source='color.products.id')
 
     class Meta:
-        model = ShoppingCart
+        model = Cart
         fields = ('id', 'title')
         ref_name = 'ProductOrder'
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(source='products.title')
-    id = serializers.IntegerField(source='products.id')
-    collection = serializers.CharField(source='products.collection')
-    old_price = serializers.CharField(source='products.old_price')
-    new_price = serializers.CharField(source='products.new_price')
-    discount = serializers.CharField(source='products.discount')
-    amount = serializers.CharField(source='products.amount')
-    size = serializers.CharField(source='products.size')
-    line = serializers.CharField(source='products.line_of_size')
+    title = serializers.CharField(source='color.products.title')
+    id = serializers.IntegerField(source='color.products.id')
+    collection = serializers.CharField(source='color.products.collection')
+    old_price = serializers.CharField(source='color.products.old_price')
+    new_price = serializers.CharField(source='color.products.new_price')
+    discount = serializers.CharField(source='color.products.discount')
+    size = serializers.CharField(source='color.products.size')
+    line = serializers.CharField(source='color.products.line_of_size')
 
     class Meta:
-        model = ShoppingCart
-        fields = ('id', 'title', 'collection', 'old_price', 'new_price', 'discount', 'amount', 'size', 'line')
+        model = Cart
+        fields = ('color','title', 'collection', 'old_price', 'new_prce' 'discount', 'size', 'line')
         ref_name = 'ProductOrder'
 
 
@@ -75,10 +74,9 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_product(self, obj):
-        count_fav = ShoppingCart.objects.all()
+        count_fav = Cart.objects.all()
         count_fav_data = ProductSerializer(count_fav, many=True)
         return count_fav_data.data
-
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
@@ -90,17 +88,15 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_product(self, obj):
-        count_fav = ShoppingCart.objects.all()
+        count_fav = Cart.objects.all()
         count_fav_data = ProductDetailSerializer(count_fav, many=True)
         return count_fav_data.data
 
     def perform_create(self, serializer, *args, **kwargs):
         order = serializer.save()
-        shop_carts = ShoppingCart.objects.all()
+        shop_carts = Cart.objects.all()
         for shop_cart in shop_carts:
             order_products = Order()
-            order_products.products = shop_cart.products
-
             order_products.product_quantity = shop_cart.quantity
             order_products.save()
             shop_cart.delete()

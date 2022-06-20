@@ -40,16 +40,9 @@ class ProductImageColorInLine(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageColorInLine, ]
     list_display = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                    'description', 'line_of_size', 'compound', 'amount', 'material', 'new',
-                    'hit')
+                    'description', 'line_of_size', 'compound', 'material', 'new', 'hit')
     list_filter = ('hit', 'new')
     search_fields = ("title__startswith",)
-
-
-# class NumberInLine(admin.TabularInline):
-#     model = Number
-#     max_num = 2
-#     min_num = 1
 
 
 class SecondFooterInLine(admin.TabularInline):
@@ -135,6 +128,19 @@ class CollectionAdmin(admin.ModelAdmin):
 @admin.register(Slider)
 class SliderAdmin(admin.ModelAdmin):
     list_display = ('image', 'field_link')
+
+    def has_add_permission(self, request):
+        return False if Slider.objects.all() else True
+
+    def delete(self):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        if Slider.objects.all().first():
+            slider = Slider.objects.all().first()
+            return redirect(request.path + str(slider.id))
+        elif Slider.objects.all().count() < 1:
+            return redirect(request.path + 'add')
 
 
 @admin.register(BackCall)

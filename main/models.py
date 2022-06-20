@@ -1,17 +1,10 @@
 from datetime import datetime
 
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, FileExtensionValidator
 from django.db import models
 from ckeditor.fields import RichTextField
 from colorful.fields import RGBColorField
-
-
-def png_or_svg(value):
-    """Валидация на формат изображения"""
-
-    if not str(value).endswith('png') or str(value).endswith('svg'):
-        raise ValidationError("Не правильный формат лого")
 
 
 class AboutUs(models.Model):
@@ -35,7 +28,7 @@ class AboutUsImage(models.Model):
 
 class Benefit(models.Model):
     """Наши преимущества"""
-    icon = models.ImageField(upload_to='benefit', validators=[png_or_svg])
+    icon = models.ImageField(upload_to='benefit', validators=[FileExtensionValidator(['svg', 'png'])])
     title = models.CharField(max_length=150)
     description = models.TextField()
 
@@ -103,7 +96,7 @@ class Collection(models.Model):
 
     class Meta:
         verbose_name = 'Коллекция'
-        verbose_name_plural = verbose_name
+        verbose_name_plural =   verbose_name
 
     def __str__(self):
         return self.title
@@ -112,7 +105,7 @@ class Collection(models.Model):
 class Slider(models.Model):
     """Слайдер"""
     image = models.ImageField(upload_to='slider_image', null=True, verbose_name='Фото')
-    field_link = models.CharField(max_length=150, blank=True, verbose_name='Ссылка')
+    field_link = models.URLField(blank=True)
 
     class Meta:
         verbose_name = 'Слайдер'
@@ -157,7 +150,6 @@ class Product(models.Model):
     size = models.CharField(max_length=55, default='42-50', verbose_name='Размер')
     line_of_size = models.CharField(max_length=55, blank=True, null=True, verbose_name='Линейка')
     compound = models.CharField(max_length=155, verbose_name='Состав')
-    amount = models.PositiveIntegerField(verbose_name='Кол-во', default=1)
     material = models.CharField(max_length=150, verbose_name='Материал')
     new = models.BooleanField(default=False, blank=True, null=True, verbose_name='Новинка')
     hit = models.BooleanField(default=False, blank=True, null=True, verbose_name='Хит продаж')
@@ -176,6 +168,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = verbose_name
+        unique_together = ("article",)
 
     def __str__(self):
         return self.title
@@ -193,7 +186,8 @@ class ProductImageColor(models.Model):
 
 class Footer(models.Model):
     """Футер(первая вкладка)"""
-    logo = models.ImageField(upload_to='footer_header', verbose_name='Логотип', validators=[png_or_svg])
+    logo = models.ImageField(upload_to='footer_header', verbose_name='Логотип',
+                             validators=[FileExtensionValidator(['svg', 'png'])])
     imformation = models.TextField(verbose_name='Информация')
     number = models.CharField(max_length=15, verbose_name='Номер')
 
@@ -232,6 +226,3 @@ class SecondFooter(models.Model):
 
     def __str__(self):
         return self.messen
-
-
-
