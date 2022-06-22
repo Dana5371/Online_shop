@@ -51,6 +51,7 @@ schema_view = get_schema_view(
 router = DefaultRouter()
 router.register(r'cart', ShoppingCartViewset, basename="cart")
 router.register(r'order', OrderViewset, basename="order")
+router.register(r'product', ProductListView, basename='product')
 
 
 urlpatterns = [
@@ -67,7 +68,7 @@ urlpatterns = [
     path('api/v1/backcall', BackCallListView.as_view()),
     path('api/v1/backcall/<int:pk>', BackcallDeleteApi.as_view()),
     path('api/v1/slider/', SliderListView.as_view()),
-    path('api/v1/product/', ProductListView.as_view()),
+    # path('api/v1/product/', ProductListView.as_view()),
     path('api/v1/product/<str:pk>/', ProductDetailView.as_view()),
     path('api/v1/hit/', HitListView.as_view()),
     path('api/v1/new/', NewListView.as_view()),

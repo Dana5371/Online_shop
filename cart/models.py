@@ -8,6 +8,7 @@ from main.models import *
 
 
 class Cart(models.Model):
+    """Корзина"""
     quantity = models.PositiveIntegerField(default=1, verbose_name='Кол-во')
     color = models.ForeignKey(ProductImageColor, on_delete=models.CASCADE, verbose_name='Цвет товара')
 

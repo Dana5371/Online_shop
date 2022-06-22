@@ -180,9 +180,10 @@ class Product(models.Model):
     hit = models.BooleanField(default=False,
                               blank=True, null=True,
                               verbose_name='Хит продаж')
-    favorite = models.BooleanField(default=False,
-                                   blank=True, null=True,
-                                   verbose_name='Избранные')
+
+    # favorite = models.BooleanField(default=False,
+    #                                blank=True, null=True,
+    #                                verbose_name='Избранные')
 
     def save(self):
         if self.discount != 0:
@@ -229,8 +230,8 @@ class Footer(models.Model):
     imformation = models.TextField(verbose_name='Информация')
     number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
     number = models.CharField(validators=[number_regex],
-                                       max_length=14,
-                                       verbose_name='Номер телефона')
+                              max_length=14,
+                              verbose_name='Номер телефона')
 
     class Meta:
         verbose_name = 'Футер(первая вкладка)'
@@ -270,3 +271,14 @@ class SecondFooter(models.Model):
         return self.messen
 
 
+class Favorite(models.Model):
+    """
+    Избранные товары авторизованного юзера
+    """
+    products = models.ForeignKey(Product,
+                                 on_delete=models.CASCADE,
+                                 )
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                            )
+    favorite = models.BooleanField(default=True)
