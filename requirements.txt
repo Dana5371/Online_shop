@@ -7,3 +7,4 @@ drf-yasg
 django-ckeditor
 django-colorful
 django-rest-multiple-models
+djangorestframework-simplejwt

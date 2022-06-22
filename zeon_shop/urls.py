@@ -21,8 +21,16 @@ from rest_framework.routers import DefaultRouter
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from rest_framework_simplejwt.views import TokenVerifyView
+
+from account.views import RegisterView
 from cart.views import *
 from order.views import OrderViewset
+
 
 from main.views import *
 from main import views
@@ -49,11 +57,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', schema_view.with_ui()),
     path('api/v1/about-us/', AboutUsListView.as_view()),
-    path('api/v1/benefit', BenefitListView.as_view()),
+    path('api/v1/benefit/', BenefitListView.as_view()),
     path('api/v1/news/', NewsListView.as_view()),
     path('api/v1/oferro/', OferroListView.as_view()),
     path('api/v1/help/', HelpListView.as_view()),
     path('api/v1/collection/', CollectionListView.as_view()),
+    path('api/v1/main-collection/', CollectionMainPageListView.as_view()),
     path('api/v1/collection/<int:pk>/', CollectionProductDetailView.as_view()),
     path('api/v1/backcall', BackCallListView.as_view()),
     path('api/v1/backcall/<int:pk>', BackcallDeleteApi.as_view()),
@@ -65,6 +74,10 @@ urlpatterns = [
     path('api/v1/favorite/', FavoriteListView.as_view()),
     path('api/v1/footer/', FooterListView.as_view()),
     path('api/v1/', include(router.urls)),
+    path('api/v1/register/', RegisterView.as_view()),
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

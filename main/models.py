@@ -1,17 +1,12 @@
 from datetime import datetime
 
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, FileExtensionValidator
 from django.db import models
 from ckeditor.fields import RichTextField
 from colorful.fields import RGBColorField
 
-
-def png_or_svg(value):
-    """Валидация на формат изображения"""
-
-    if not str(value).endswith('png') or str(value).endswith('svg'):
-        raise ValidationError("Не правильный формат лого")
+from account.models import User
 
 
 class AboutUs(models.Model):
@@ -30,12 +25,16 @@ class AboutUs(models.Model):
 class AboutUsImage(models.Model):
     """О нас"""
     image = models.ImageField(upload_to='about', blank=True, null=True)
-    about_us = models.ForeignKey(AboutUs, on_delete=models.CASCADE, related_name='images')
+    about_us = models.ForeignKey(AboutUs,
+                                 on_delete=models.CASCADE,
+                                 related_name='images')
 
 
 class Benefit(models.Model):
     """Наши преимущества"""
-    icon = models.ImageField(upload_to='benefit', validators=[png_or_svg])
+    icon = models.ImageField(
+        upload_to='benefit',
+        validators=[FileExtensionValidator(['svg', 'png'])])
     title = models.CharField(max_length=150)
     description = models.TextField()
 
@@ -111,8 +110,10 @@ class Collection(models.Model):
 
 class Slider(models.Model):
     """Слайдер"""
-    image = models.ImageField(upload_to='slider_image', null=True, verbose_name='Фото')
-    field_link = models.CharField(max_length=150, blank=True, verbose_name='Ссылка')
+    image = models.ImageField(
+        upload_to='slider_image',
+        null=True, verbose_name='Фото')
+    field_link = models.URLField(blank=True)
 
     class Meta:
         verbose_name = 'Слайдер'
@@ -130,10 +131,17 @@ class BackCall(models.Model):
     ]
     name = models.CharField(max_length=155, verbose_name='Имя')
     number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
-    number_of_phone = models.CharField(validators=[number_regex], max_length=14, unique=True, null=False, blank=False,
+    number_of_phone = models.CharField(validators=[number_regex],
+                                       max_length=14, unique=True,
+                                       null=False, blank=False,
                                        verbose_name='Номер телефона')
-    type = models.CharField(max_length=255, default='Обратный звонок', verbose_name='Тип обращения')
-    date_of_call = models.DateTimeField(default=datetime.now, verbose_name=u"добавить время")
+    type = models.CharField(
+        max_length=255,
+        default='Обратный звонок',
+        verbose_name='Тип обращения')
+    date_of_call = models.DateTimeField(
+        default=datetime.now,
+        verbose_name=u"добавить время")
     status = models.CharField(choices=STATUS, default='no', max_length=155)
 
     class Meta:
@@ -146,22 +154,35 @@ class BackCall(models.Model):
 
 class Product(models.Model):
     """Товар"""
-    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='product',
-                                   verbose_name='Коллекция')
+    collection = models.ForeignKey(
+        Collection, on_delete=models.CASCADE,
+        related_name='product', verbose_name='Коллекция')
     title = models.CharField(max_length=200, verbose_name='Заголовок')
     article = models.CharField(max_length=150, verbose_name='Артикль')
     old_price = models.CharField(max_length=150, verbose_name='Старая цена')
-    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, verbose_name='Скидка')
-    new_price = models.IntegerField(blank=True, null=True, default=0, verbose_name='Новая цена')
+    discount = models.DecimalField(max_digits=10, decimal_places=2,
+                                   default=0, blank=True,
+                                   verbose_name='Скидка')
+    new_price = models.IntegerField(blank=True, null=True,
+                                    default=0, verbose_name='Новая цена')
     description = RichTextField(verbose_name='Описание')
-    size = models.CharField(max_length=55, default='42-50', verbose_name='Размер')
-    line_of_size = models.CharField(max_length=55, blank=True, null=True, verbose_name='Линейка')
+    size = models.CharField(max_length=55,
+                            default='42-50',
+                            verbose_name='Размер')
+    line_of_size = models.CharField(max_length=55,
+                                    blank=True, null=True,
+                                    verbose_name='Линейка')
     compound = models.CharField(max_length=155, verbose_name='Состав')
-    amount = models.PositiveIntegerField(verbose_name='Кол-во', default=1)
     material = models.CharField(max_length=150, verbose_name='Материал')
-    new = models.BooleanField(default=False, blank=True, null=True, verbose_name='Новинка')
-    hit = models.BooleanField(default=False, blank=True, null=True, verbose_name='Хит продаж')
-    favorite = models.BooleanField(default=False, blank=True, null=True, verbose_name='Избранные')
+    new = models.BooleanField(default=False,
+                              blank=True, null=True,
+                              verbose_name='Новинка')
+    hit = models.BooleanField(default=False,
+                              blank=True, null=True,
+                              verbose_name='Хит продаж')
+    favorite = models.BooleanField(default=False,
+                                   blank=True, null=True,
+                                   verbose_name='Избранные')
 
     def save(self):
         if self.discount != 0:
@@ -170,12 +191,14 @@ class Product(models.Model):
             super(Product, self).save()
         else:
             super(Product, self).save()
-        self.line_of_size = ((int(self.size[3:]) - int(self.size[0:2])) // 2) + 1
+        self.line_of_size = (
+                                    (int(self.size[3:]) - int(self.size[0:2])) // 2) + 1
         super(Product, self).save()
 
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = verbose_name
+        unique_together = ("article",)
 
     def __str__(self):
         return self.title
@@ -183,9 +206,14 @@ class Product(models.Model):
 
 class ProductImageColor(models.Model):
     """Фотография и цвет для товара"""
-    image = models.ImageField(upload_to='product', blank=True, null=True, verbose_name='Фото')
+    image = models.ImageField(upload_to='product',
+                              blank=True, null=True,
+                              verbose_name='Фото')
     color = RGBColorField()
-    products = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images', verbose_name='Товары')
+    products = models.ForeignKey(Product,
+                                 on_delete=models.CASCADE,
+                                 related_name='images',
+                                 verbose_name='Товары')
 
     def __str__(self):
         return f'{self.color},{self.image}'
@@ -193,20 +221,20 @@ class ProductImageColor(models.Model):
 
 class Footer(models.Model):
     """Футер(первая вкладка)"""
-    logo = models.ImageField(upload_to='footer_header', verbose_name='Логотип', validators=[png_or_svg])
+    logo = models.ImageField(upload_to='footer_header',
+                             verbose_name='Логотип',
+                             validators=[
+                                 FileExtensionValidator(['svg', 'png'])
+                             ])
     imformation = models.TextField(verbose_name='Информация')
-    number = models.CharField(max_length=15, verbose_name='Номер')
+    number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
+    number = models.CharField(validators=[number_regex],
+                                       max_length=14,
+                                       verbose_name='Номер телефона')
 
     class Meta:
         verbose_name = 'Футер(первая вкладка)'
         verbose_name_plural = verbose_name
-
-    def save(self):
-        if str(self.logo).endswith('png') or str(self.logo).endswith('svg'):
-            super(Footer, self).save()
-        else:
-            return 'heheh'
-        super(Footer, self).save()
 
     def __str__(self):
         return self.number
@@ -221,8 +249,10 @@ class SecondFooter(models.Model):
         ('telegram', 'Телеграм'),
         ('whatsapp', 'WhatsApp')
     ]
-    messen = models.CharField(choices=MESSENGER, max_length=155, verbose_name='Соцсеть')
-    link = models.CharField(max_length=16, blank=True, null=True)
+    messen = models.CharField(choices=MESSENGER,
+                              max_length=155, verbose_name='Соцсеть')
+    link = models.CharField(max_length=255, blank=True, null=True)
+    footer = models.ForeignKey(Footer, on_delete=models.CASCADE)
 
     def save(self):
         if self.messen == 'whatsapp':
@@ -240,9 +270,3 @@ class SecondFooter(models.Model):
         return self.messen
 
 
-class Number(models.Model):
-    """Номера для футера"""
-    number_check = RegexValidator(regex=r"^\+?1?\d{8,15}$")
-    number = models.CharField(validators=[number_check], max_length=14, unique=True, null=False,
-                              blank=False, verbose_name='Номер телефона')
-    second_footer = models.ForeignKey(SecondFooter, on_delete=models.CASCADE, related_name='footer')
