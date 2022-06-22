@@ -99,8 +99,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                  'description', 'size', 'line_of_size', 'compound', 'material',
+        fields = ('collection', 'title', 'article', 'old_price',
+                  'discount', 'new_price', 'description', 'size',
+                  'line_of_size', 'compound', 'material',
                   'favorite', 'images')
 
 
@@ -121,11 +122,14 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                  'description', 'size', 'line_of_size', 'compound', 'material', 'favorite', 'images', 'alike')
+        fields = ('collection', 'title', 'article', 'old_price',
+                  'discount', 'new_price', 'description', 'size',
+                  'line_of_size', 'compound', 'material', 'favorite',
+                  'images', 'alike')
 
     def get_alike_product(self, obj):
-        alike = Product.objects.filter(Q(collection=obj.collection) & ~Q(id=obj.id))[:5]
+        alike = Product.objects.filter(
+            Q(collection=obj.collection) & ~Q(id=obj.id))[:5]
         alike_data = SimilarProductSerializer(alike, many=True).data
         return alike_data
 
@@ -150,7 +154,8 @@ class NewProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'old_price', 'new_price', 'discount', 'size', 'favorite', 'images')
+        fields = ('id', 'title', 'old_price', 'new_price',
+                  'discount', 'size', 'favorite', 'images')
 
 
 class HitProductSerializer(serializers.ModelSerializer):
@@ -159,7 +164,8 @@ class HitProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'old_price', 'new_price', 'discount', 'size', 'favorite', 'images')
+        fields = ('id', 'title', 'old_price', 'new_price',
+                  'discount', 'size', 'favorite', 'images')
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -168,7 +174,20 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'discount', 'old_price', 'new_price', 'title', 'size', 'favorite', 'images')
+        fields = ('id', 'discount', 'old_price', 'new_price',
+                  'title', 'size', 'favorite', 'images')
+
+# class FavoriteSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = Favorite
+#         fields = '__all__'
+#
+#     def to_representation(self, instance):
+#         representation = super().to_representation(instance)
+#         representation['user'] = instance.user.email
+#         representation['image'] = ProductImageColorSerializer(instance.image.all(), many=True).data
+#         return representation
 
 
 class FooterSerializer(serializers.ModelSerializer):

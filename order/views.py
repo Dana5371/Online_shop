@@ -5,7 +5,8 @@ from order.serializers import OrderSerializer, OrderDetailSerializer
 from cart.models import Cart
 
 
-class OrderViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin,
+class OrderViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                   mixins.CreateModelMixin, mixins.DestroyModelMixin,
                    viewsets.GenericViewSet):
     serializer_class = OrderSerializer
 

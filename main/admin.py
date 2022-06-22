@@ -39,8 +39,10 @@ class ProductImageColorInLine(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageColorInLine, ]
-    list_display = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                    'description', 'line_of_size', 'compound', 'material', 'new', 'hit')
+    list_display = ('collection', 'title', 'article', 'old_price',
+                    'discount', 'new_price', 'description',
+                    'line_of_size', 'compound', 'material', 'new',
+                    'hit')
     list_filter = ('hit', 'new')
     search_fields = ("title__startswith",)
 
@@ -145,4 +147,5 @@ class SliderAdmin(admin.ModelAdmin):
 
 @admin.register(BackCall)
 class BackCallAdmin(admin.ModelAdmin):
-    list_display = ('name', 'number_of_phone', 'type', 'status', 'date_of_call')
+    list_display = ('name', 'number_of_phone',
+                    'type', 'status', 'date_of_call')

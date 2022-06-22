@@ -14,7 +14,7 @@ class Cart(models.Model):
     class Meta:
         verbose_name = 'Корзина'
         verbose_name_plural = verbose_name
-        unique_together = ("color",)
+
 
     def __str__(self):
         return str(self.color)

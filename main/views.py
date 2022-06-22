@@ -1,4 +1,5 @@
-"""Модули"""
+from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.generics import *
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -7,11 +8,7 @@ from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
 from rest_framework.filters import SearchFilter, OrderingFilter
 import random
 
-"""Импорты"""
-
 from .serializers import *
-
-"""Классы пагинации"""
 
 
 class LimitPagination(MultipleModelLimitOffsetPagination):
@@ -64,8 +61,14 @@ class HelpListView(ObjectMultipleModelAPIView):
     """Помощь"""
     pagination_class = LimitPagination
     querylist = [
-        {'queryset': Help.objects.all(), 'serializer_class': HelpSerializer},
-        {'queryset': ImageHelp.objects.all(), 'serializer_class': ImageHelpSerializer}
+        {
+            'queryset': Help.objects.all(),
+            'serializer_class': HelpSerializer
+        },
+        {
+            'queryset': ImageHelp.objects.all(),
+            'serializer_class': ImageHelpSerializer
+        }
     ]
 
 
@@ -115,12 +118,24 @@ class ProductListView(ListAPIView):
     search_fields = ['title']
     pagination_class = TwelveAPIListPagination
 
-    # если поиск не удался,вытаскиваем 5 рандомных продуктов из разных коллекций
+    @action(detail=False, methods=['get'])
+    def favorites(self, request):
+        print('hello')
+        print(request)
+        queryset = Product.objects.filter(favorite=True)
+        queryset = queryset.filter(user=request.user)
+        serializer = FavoriteSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # если поиск не удался,вытаскиваем 5
+    # рандомных продуктов из разных коллекций
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         if not queryset:
-            queryset = set(Product.objects.values_list('collection', flat=True))
-            queryset = [random.choice(Product.objects.filter(collection=i)) for i in queryset]
+            queryset = set(Product.objects.values_list(
+                'collection', flat=True))
+            queryset = [random.choice(Product.objects.filter(
+                collection=i)) for i in queryset]
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -155,24 +170,33 @@ class FavoriteListView(ListAPIView):
     serializer_class = FavoriteSerializer
 
     # если нет избранных,вытаскиваем рандомом 5 продуктов из разных коллекций
-    def list(self, request, *args, **kwargs):
+    def list(self, request):
         queryset = self.filter_queryset(self.get_queryset())
         if not queryset:
-            queryset = set(Product.objects.values_list('collection', flat=True))
-            queryset = [random.choice(Product.objects.filter(collection=i)) for i in queryset]
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            queryset = set(Product.objects.values_list(
+                'collection', flat=True))
+            queryset = [random.choice(Product.objects.filter(
+                collection=i)) for i in queryset]
         serializer = self.get_serializer(queryset, many=True)
-        return Response(
-            {"Products": serializer.data, "Favorite products": len(list(Product.objects.filter(favorite=True)))})
+        return Response({
+            "Products": serializer.data,
+            "Favorite products": len(list(
+                Product.objects.filter(favorite=True)))
+        })
 
 
 class FooterListView(ObjectMultipleModelAPIView):
     """Футер"""
     pagination_class = LimitPagination
     querylist = [
-        {'queryset': Footer.objects.all(), 'serializer_class': FooterSerializer},
-        {'queryset': SecondFooter.objects.all(), 'serializer_class': SecondFooterSerializer},
+        {
+            'queryset': Footer.objects.all(),
+            'serializer_class': FooterSerializer
+        },
+        {
+            'queryset': SecondFooter.objects.all(),
+            'serializer_class': SecondFooterSerializer
+        },
     ]
+
+
