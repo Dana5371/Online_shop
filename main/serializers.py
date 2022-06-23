@@ -112,7 +112,7 @@ class SimilarProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'old_price', 'discount', 'new_price',
-                  'size','images')
+                  'size', 'images')
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
@@ -161,7 +161,7 @@ class NewProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'old_price', 'new_price',
-                  'discount', 'size','images')
+                  'discount', 'size', 'images')
 
 
 class HitProductSerializer(serializers.ModelSerializer):
@@ -172,16 +172,6 @@ class HitProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('id', 'title', 'old_price', 'new_price',
                   'discount', 'size', 'images')
-
-
-# class FavoriteSerializer(serializers.ModelSerializer):
-#     """Избранные"""
-#     images = ProductImageColorSerializer(many=True)
-#
-#     class Meta:
-#         model = Product
-#         fields = ('id', 'discount', 'old_price', 'new_price',
-#                   'title', 'size','images')
 
 
 class FooterSerializer(serializers.ModelSerializer):
@@ -198,24 +188,3 @@ class SecondFooterSerializer(serializers.ModelSerializer):
     class Meta:
         model = SecondFooter
         fields = ('messen', 'link')
-
-
-class FavoriteUserSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(source='products.title')
-    collection = serializers.CharField(source='products.collection')
-    old_price = serializers.CharField(source='products.old_price')
-    new_price = serializers.CharField(source='products.new_price')
-    discount = serializers.CharField(source='products.discount')
-    size = serializers.CharField(source='products.size')
-    line = serializers.CharField(source='products.line_of_size')
-
-    class Meta:
-        model = Favorite
-        fields = ('favorite', 'user', 'favorite', 'title', 'collection',
-                  'old_price', 'new_price', 'discount', 'size', 'line')
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['user'] = instance.user.email
-        representation['products'] = instance.products.title
-        return representation

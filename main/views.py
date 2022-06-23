@@ -10,7 +10,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 import random
 
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from .serializers import *
 
@@ -114,11 +114,14 @@ class BackcallDeleteApi(DestroyAPIView):
     serializer_class = BackCallSerializer
 
 
-class ProductListView(ModelViewSet):
+class ProductViewSet(mixins.RetrieveModelMixin,
+                     mixins.DestroyModelMixin,
+                     mixins.ListModelMixin,
+                     GenericViewSet):
     """Товар"""
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    filter_backends = (SearchFilter, OrderingFilter)
+    filter_backends = (SearchFilter,)
     search_fields = ['title']
     pagination_class = TwelveAPIListPagination
 
@@ -133,11 +136,7 @@ class ProductListView(ModelViewSet):
             obj.save()
         favorites = 'added to favorites' if obj.favorite else 'removed to favorites'
         return Response(
-            'Successfully {} !'.format(favorites), status=status.HTTP_200_OK
-        )
-
-    def get_serializer_context(self):
-        return {'request': self.request, 'action': self.action}
+            'Successfully {} !'.format(favorites), status=status.HTTP_200_OK)
 
     # если поиск не удался,вытаскиваем 5
     # рандомных продуктов из разных коллекций
@@ -148,10 +147,6 @@ class ProductListView(ModelViewSet):
                 'collection', flat=True))
             queryset = [random.choice(Product.objects.filter(
                 collection=i)) for i in queryset]
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -184,8 +179,7 @@ class FavoriteListView(APIView):
     def get(self, request, format=None):
         queryset = Favorite.objects.filter(user=request.user)
         queryset = (product.products for product in queryset)
-        print(queryset)
-        if len(str(queryset)) > 0:
+        if len(list(Favorite.objects.filter(favorite=True))) > 0:
             serializer = ProductSerializer(queryset, many=True)
             return Response({
                 "Количество избранных товаров": len(list(
@@ -196,14 +190,14 @@ class FavoriteListView(APIView):
         else:
             queryset = set(Product.objects.values_list(
                 'collection', flat=True))
+            print(queryset)
             queryset = [random.choice(Product.objects.filter(
-                collection=i)) for i in queryset][:5]
+                collection=i)) for i in queryset]
             serializer = ProductSerializer(queryset, many=True)
         return Response({
             "Количество избранных товаров": len(list(
                 Favorite.objects.filter(favorite=True))),
-            "У вас нет избранных товаров": serializer.data,
-
+            "Рекомендации": serializer.data,
         })
 
 

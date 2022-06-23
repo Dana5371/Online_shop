@@ -1,6 +1,4 @@
 from datetime import datetime
-
-from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, FileExtensionValidator
 from django.db import models
 from ckeditor.fields import RichTextField
@@ -26,8 +24,7 @@ class AboutUsImage(models.Model):
     """О нас"""
     image = models.ImageField(upload_to='about', blank=True, null=True)
     about_us = models.ForeignKey(AboutUs,
-                                 on_delete=models.CASCADE,
-                                 related_name='images')
+                                 on_delete=models.CASCADE)
 
 
 class Benefit(models.Model):
@@ -181,10 +178,6 @@ class Product(models.Model):
                               blank=True, null=True,
                               verbose_name='Хит продаж')
 
-    # favorite = models.BooleanField(default=False,
-    #                                blank=True, null=True,
-    #                                verbose_name='Избранные')
-
     def save(self):
         if self.discount != 0:
             price_with_discount = (int(self.old_price) * self.discount) / 100
@@ -280,5 +273,5 @@ class Favorite(models.Model):
                                  )
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE,
-                            )
+                             )
     favorite = models.BooleanField(default=True)
