@@ -5,6 +5,7 @@ from .serializers import ShopCartSerializer, ShopCartDetailSerializer
 
 
 class ShoppingCartViewset(viewsets.ModelViewSet):
+    """Корзина"""
     serializer_class = ShopCartSerializer
     """изменяем идентификатор товара, а не идентификатор самой записи"""
     lookup_field = "color_id"

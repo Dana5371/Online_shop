@@ -7,6 +7,7 @@ from account.serializers import RegisterSerializer
 
 
 class RegisterView(APIView):
+    """Регистрация пользователя"""
     def post(self, request):
         data = request.data
         serializer = RegisterSerializer(data=data)

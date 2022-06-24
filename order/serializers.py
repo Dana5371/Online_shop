@@ -1,16 +1,26 @@
 from rest_framework import serializers
 
 from cart.models import Cart
-from cart.serializers import ProductSerializer
-from main.models import ProductImageColor
+from main.models import ProductImageColor, Product
 from .models import Order
 
 
-class ProductImageColorSerializer(serializers.ModelSerializer):
+class ProductColorSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImageColor
         fields = ('image', 'color')
-        ref_name = 'Image'
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    images = ProductColorSerializer(many=True)
+    """Все продукты"""
+
+    class Meta:
+        model = Product
+        fields = ('id', 'title', 'old_price',
+                  'discount', 'new_price',
+                  'size', 'images')
+        ref_name = 'ProductCart'
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -34,6 +44,15 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     line = serializers.CharField(source='color.products.line_of_size')
 
     class Meta:
+        title = serializers.CharField(source='color.products.title')
+        collection = serializers.CharField(source='color.products.collection')
+        old_price = serializers.CharField(source='color.products.old_price')
+        new_price = serializers.CharField(source='color.products.new_price')
+        discount = serializers.CharField(source='color.products.discount')
+        size = serializers.CharField(source='color.products.size')
+        line = serializers.CharField(source='color.products.line_of_size')
+
+    class Meta:
         model = Cart
         fields = ('color', 'title', 'collection',
                   'old_price', 'discount', 'new_price',
@@ -49,8 +68,9 @@ class OrderSerializer(serializers.ModelSerializer):
     price_with_discount = serializers.IntegerField(read_only=True)
     discount = serializers.IntegerField(read_only=True)
     quantity_of_products = serializers.IntegerField(read_only=True)
-    add_time = serializers.DateTimeField(read_only=True)
     quantity_of_size = serializers.CharField(read_only=True)
+    add_time = serializers.DateTimeField(read_only=True)
+
 
     """Функция создания номера заказа"""
 

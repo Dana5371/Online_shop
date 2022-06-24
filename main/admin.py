@@ -40,9 +40,8 @@ class ProductImageColorInLine(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageColorInLine, ]
     list_display = ('collection', 'title', 'article', 'old_price',
-                    'discount', 'new_price', 'description',
-                    'line_of_size', 'compound', 'material', 'new',
-                    'hit')
+                    'discount', 'new_price', 'line_of_size',
+                    'compound', 'material', 'new', 'hit')
     list_filter = ('hit', 'new')
     search_fields = ("title__startswith",)
 

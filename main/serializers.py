@@ -102,7 +102,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ('collection', 'title', 'article', 'old_price',
                   'discount', 'new_price', 'description', 'size',
                   'line_of_size', 'compound', 'material',
-                  'favorite', 'images')
+                  'images')
 
 
 class SimilarProductSerializer(serializers.ModelSerializer):
@@ -112,7 +112,7 @@ class SimilarProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'old_price', 'discount', 'new_price',
-                  'size', 'favorite', 'images')
+                  'size', 'images')
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
@@ -124,7 +124,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('collection', 'title', 'article', 'old_price',
                   'discount', 'new_price', 'description', 'size',
-                  'line_of_size', 'compound', 'material', 'favorite',
+                  'line_of_size', 'compound', 'material',
                   'images', 'alike')
 
     def get_alike_product(self, obj):
@@ -137,13 +137,19 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 class CollectionProductSerializer(serializers.ModelSerializer):
     """Детализация коллекции"""
     products = serializers.SerializerMethodField('get_products')
+    new_products = serializers.SerializerMethodField('get_new_product')
 
     class Meta:
         model = Collection
-        fields = ('id', 'image', 'title', 'products')
+        fields = ('id', 'image', 'title', 'products', 'new_products')
 
     def get_products(self, obj):
         products = Product.objects.filter(collection=obj.id)
+        products_data = ProductSerializer(products, many=True)
+        return products_data.data
+
+    def get_new_product(self, obj):
+        products = Product.objects.filter(new=True)[:5]
         products_data = ProductSerializer(products, many=True)
         return products_data.data
 
@@ -155,7 +161,7 @@ class NewProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'old_price', 'new_price',
-                  'discount', 'size', 'favorite', 'images')
+                  'discount', 'size', 'images')
 
 
 class HitProductSerializer(serializers.ModelSerializer):
@@ -165,29 +171,7 @@ class HitProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'old_price', 'new_price',
-                  'discount', 'size', 'favorite', 'images')
-
-
-class FavoriteSerializer(serializers.ModelSerializer):
-    """Избранные"""
-    images = ProductImageColorSerializer(many=True)
-
-    class Meta:
-        model = Product
-        fields = ('id', 'discount', 'old_price', 'new_price',
-                  'title', 'size', 'favorite', 'images')
-
-# class FavoriteSerializer(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = Favorite
-#         fields = '__all__'
-#
-#     def to_representation(self, instance):
-#         representation = super().to_representation(instance)
-#         representation['user'] = instance.user.email
-#         representation['image'] = ProductImageColorSerializer(instance.image.all(), many=True).data
-#         return representation
+                  'discount', 'size', 'images')
 
 
 class FooterSerializer(serializers.ModelSerializer):

@@ -3,24 +3,6 @@ from rest_framework import serializers
 from .models import *
 
 
-class ProductColorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImageColor
-        fields = ('image', 'color')
-
-
-class ProductSerializer(serializers.ModelSerializer):
-    images = ProductColorSerializer(many=True)
-    """Все продукты"""
-
-    class Meta:
-        model = Product
-        fields = ('id', 'title', 'old_price',
-                  'discount', 'new_price',
-                  'size', 'images')
-        ref_name = 'ProductCart'
-
-
 class ShopCartDetailSerializer(serializers.ModelSerializer):
     """Информация о продукте в корзине"""
     title = serializers.CharField(source='color.products.title')
