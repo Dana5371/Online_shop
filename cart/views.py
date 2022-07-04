@@ -1,14 +1,15 @@
 from rest_framework import viewsets
-from .models import ShoppingCart
+
+from .models import Cart
 from .serializers import ShopCartSerializer, ShopCartDetailSerializer
 
 
 class ShoppingCartViewset(viewsets.ModelViewSet):
+    """Корзина"""
     serializer_class = ShopCartSerializer
-    #  Мы изменяем идентификатор товара, а не идентификатор самой записи.
-    lookup_field = "products_id"
+    """изменяем идентификатор товара, а не идентификатор самой записи"""
+    lookup_field = "color_id"
 
-    #  Компоненты шунтовой сериализации
     def get_serializer_class(self):
         if self.action == 'list':
             return ShopCartDetailSerializer
@@ -16,5 +17,5 @@ class ShoppingCartViewset(viewsets.ModelViewSet):
             return ShopCartSerializer
 
     def get_queryset(self):
-        return ShoppingCart.objects.all()
+        return Cart.objects.all()
 

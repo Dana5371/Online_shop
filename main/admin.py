@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.shortcuts import redirect
+
 from .models import *
 
 
@@ -16,6 +18,16 @@ class AboutUsAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False if AboutUs.objects.all() else True
 
+    def delete(self):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        if AboutUs.objects.all().first():
+            aboutus = AboutUs.objects.all().first()
+            return redirect(request.path + str(aboutus.id))
+        elif AboutUs.objects.all().count() < 1:
+            return redirect(request.path + 'add')
+
 
 class ProductImageColorInLine(admin.TabularInline):
     model = ProductImageColor
@@ -27,32 +39,35 @@ class ProductImageColorInLine(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageColorInLine, ]
-    list_display = ('collection', 'title', 'article', 'old_price', 'discount', 'new_price',
-                    'description', 'line_of_size', 'compound', 'amount', 'material', 'new',
-                    'hit')
+    list_display = ('collection', 'title', 'article', 'old_price',
+                    'discount', 'new_price', 'line_of_size',
+                    'compound', 'material', 'new', 'hit')
+    list_filter = ('hit', 'new')
+    search_fields = ("title__startswith",)
 
 
-class NumberInLine(admin.TabularInline):
-    model = Number
-    max_num = 2
+class SecondFooterInLine(admin.TabularInline):
+    model = SecondFooter
     min_num = 1
-
-
-@admin.register(SecondFooter)
-class SecondFooterAdmin(admin.ModelAdmin):
-    inlines = [NumberInLine, ]
-    list_display = ('messen', 'link')
-
-    def has_add_permission(self, request):
-        return False if SecondFooter.objects.all() else True
 
 
 @admin.register(Footer)
 class FooterAdmin(admin.ModelAdmin):
     list_display = ('imformation', 'number', 'logo')
+    inlines = [SecondFooterInLine, ]
 
     def has_add_permission(self, request):
         return False if Footer.objects.all() else True
+
+    def delete(self):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        if Footer.objects.all().first():
+            footer = Footer.objects.all().first()
+            return redirect(request.path + str(footer.id))
+        elif Footer.objects.all().count() < 1:
+            return redirect(request.path + 'add')
 
 
 @admin.register(Oferro)
@@ -62,6 +77,16 @@ class OferroAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False if Oferro.objects.all() else True
 
+    def delete(self):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        if Oferro.objects.all().first():
+            offer = Oferro.objects.all().first()
+            return redirect(request.path + str(offer.id))
+        elif Oferro.objects.all().count() < 1:
+            return redirect(request.path + 'add')
+
 
 @admin.register(ImageHelp)
 class ImageHelpAdmin(admin.ModelAdmin):
@@ -69,6 +94,16 @@ class ImageHelpAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False if ImageHelp.objects.all() else True
+
+    def delete(self):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        if ImageHelp.objects.all().first():
+            image = ImageHelp.objects.all().first()
+            return redirect(request.path + str(image.id))
+        elif ImageHelp.objects.all().count() < 1:
+            return redirect(request.path + 'add')
 
 
 @admin.register(Benefit)
@@ -91,6 +126,25 @@ class CollectionAdmin(admin.ModelAdmin):
     list_display = ('title', 'image')
 
 
-admin.site.register(Slider)
-admin.site.register(BackCall)
-admin.site.register(User)
+@admin.register(Slider)
+class SliderAdmin(admin.ModelAdmin):
+    list_display = ('image', 'field_link')
+
+    def has_add_permission(self, request):
+        return False if Slider.objects.all() else True
+
+    def delete(self):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        if Slider.objects.all().first():
+            slider = Slider.objects.all().first()
+            return redirect(request.path + str(slider.id))
+        elif Slider.objects.all().count() < 1:
+            return redirect(request.path + 'add')
+
+
+@admin.register(BackCall)
+class BackCallAdmin(admin.ModelAdmin):
+    list_display = ('name', 'number_of_phone',
+                    'type', 'status', 'date_of_call')

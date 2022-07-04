@@ -1,9 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import *
+from account.models import User
 
-
-@admin.register(Cart)
+@admin.register(User)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('color', 'quantity')
+    list_display = ('email',)
